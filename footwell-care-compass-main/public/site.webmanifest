@@ -1,0 +1,12 @@
+{
+  "name": "Footwell Podiatry",
+  "short_name": "Footwell",
+  "description": "Specialist podiatry and lower-limb care in Marylebone, London.",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#0f2e2e",
+  "background_color": "#fbfbf9",
+  "display": "standalone"
+}
