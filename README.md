@@ -1,6 +1,6 @@
 # Footwell Podiatry — Project Status, Technical Specification & Implementation Roadmap
 
-**Live Demo / Current Preview:** [supplied preview link](https://id-preview--ba0077dd-f9a5-451d-b994-ebe8d08a04c1.lovable.app/)
+**Live Demo / Current Preview:** [supplied preview link](https://footwell-care-compass-main-blond.vercel.app/)
 
 > The URL above was supplied in the brief. It is recorded as a preview link only: its availability, ownership, deployment configuration, and production readiness were not verified.
 
