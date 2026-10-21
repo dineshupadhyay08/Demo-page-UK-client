@@ -78,7 +78,6 @@ The codebase is a TypeScript/TanStack Start frontend with file-based routes for 
 The code explicitly labels several interactions as previews. Booking, course-enrolment interest, video controls, lesson selection, and symptom answers are kept in React component state. No database, business API, third-party booking/email/payment/video service, authentication flow, protected-content check, or persistent dashboard was found. The demo must not be used with real patient data or for clinical/financial operations.
 
 ## 4. Audit of the current demo
-====
 ### 4.1 Repository and application structure
 
 | Area | Verified evidence | Finding |
