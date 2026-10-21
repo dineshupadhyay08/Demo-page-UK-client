@@ -1,6 +1,7 @@
 import care from "@/assets/course-care.jpg";
 import problems from "@/assets/course-problems.jpg";
 import habits from "@/assets/course-habits.jpg";
+import type { StaticImageData } from "next/image";
 
 export type Level = "Beginner" | "Intermediate";
 export type Lesson = { title: string; minutes: number; summary: string };
@@ -9,14 +10,14 @@ export type Course = {
   title: string;
   description: string;
   overview: string;
-  image: string;
+  image: StaticImageData;
   level: Level;
   objectives: string[];
   lessons: Lesson[];
   preview: { heading: string; body: string[] };
 };
 
-// Demo educational content: review with the client's clinician before launch.
+// Educational content must be reviewed by the clinic's clinician before launch.
 export const COURSES: Course[] = [
   {
     slug: "everyday-foot-care",
