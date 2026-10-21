@@ -1,78 +1,26 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import {
-  ShieldCheck, Phone, MapPin, Star, ArrowRight, Menu, X, Clock, Footprints, Activity,
-  Scissors, HeartPulse, ScanLine, Printer, Microscope, Video, Mic, MicOff, VideoOff,
-  PhoneOff, Lock, GraduationCap, PlayCircle, CheckCircle2, ChevronDown, Calendar,
-  Award, Sparkles, Mail,
+  ShieldCheck, Phone, MapPin, Star, ArrowRight, Menu, X, Clock, ScanLine, Printer,
+  Microscope, CheckCircle2, ChevronDown, Award, Mail,
 } from "lucide-react";
 import clinic from "@/assets/clinic.jpg";
+import { BookingModal } from "@/components/booking/BookingModal";
+import { PlatformPreviews } from "@/components/home/PlatformPreviews";
+import { PractitionerProfile } from "@/components/home/PractitionerProfile";
+import { SymptomFinder } from "@/components/home/SymptomFinder";
+import { ActionButton } from "@/components/shared/ActionButton";
+import { SectionEyebrow } from "@/components/shared/SectionEyebrow";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { CLINIC, PRIMARY_NAVIGATION, TREATMENT_CATEGORIES, TREATMENTS, type TreatmentCategory } from "@/config/clinic";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Footwell Podiatry | Specialist Podiatrist in Marylebone, London" },
-      { name: "description", content: "HCPC-registered podiatry in Marylebone: gait analysis, custom orthotics, nail surgery and diabetic foot care for all ages." },
-      { property: "og:title", content: "Footwell Podiatry | Specialist Podiatry, Marylebone" },
-      { property: "og:description", content: "Evidence-based podiatry and lower-limb care tailored to your movement." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Index,
-});
-
-// Demo business details: replace with the client's real information.
-const CLINIC = {
-  name: "Footwell Podiatry",
-  phone: "020 7946 0321",
-  email: "hello@footwellpodiatry.co.uk",
-  address: "42 Wimpole Street, Marylebone, London W1G 8YF",
-  practitioner: "Dr Eleanor Hart",
-};
-
-type Cat = "Routine Foot Care" | "Sports & Biomechanics" | "Minor Surgery" | "Diabetic Foot Health";
-const TREATMENTS: { cat: Cat; name: string; mins: number; from: number; symptoms: string[]; icon: typeof Footprints }[] = [
-  { cat: "Routine Foot Care", name: "General Podiatry Appointment", mins: 40, from: 65, symptoms: ["Hard skin", "Corns", "Thickened nails"], icon: Footprints },
-  { cat: "Routine Foot Care", name: "Medical Pedicure", mins: 50, from: 75, symptoms: ["Callus", "Cracked heels", "Nail care"], icon: Sparkles },
-  { cat: "Sports & Biomechanics", name: "Biomechanical & Gait Assessment", mins: 60, from: 140, symptoms: ["Heel pain", "Runner's knee", "Shin splints"], icon: Activity },
-  { cat: "Sports & Biomechanics", name: "Custom 3D-Printed Orthotics", mins: 45, from: 395, symptoms: ["Flat feet", "Arch pain", "Overpronation"], icon: Printer },
-  { cat: "Minor Surgery", name: "Partial Nail Avulsion (PNA)", mins: 75, from: 450, symptoms: ["Ingrown toenail", "Recurrent infection"], icon: Scissors },
-  { cat: "Minor Surgery", name: "Verruca Treatment (Swift / Needling)", mins: 30, from: 120, symptoms: ["Persistent verruca", "Painful lesion"], icon: Microscope },
-  { cat: "Diabetic Foot Health", name: "Diabetic Foot Assessment", mins: 45, from: 85, symptoms: ["Numbness", "Poor circulation", "Annual check"], icon: HeartPulse },
-  { cat: "Diabetic Foot Health", name: "Wound & Ulcer Care Review", mins: 40, from: 90, symptoms: ["Slow-healing wound", "Skin breakdown"], icon: ShieldCheck },
-];
-const CATS: Cat[] = ["Routine Foot Care", "Sports & Biomechanics", "Minor Surgery", "Diabetic Foot Health"];
-
-const NAV = [
-  ["Treatments & Services", "#treatments"],
-  ["Biomechanics & Orthotics", "#technology"],
-  ["About the Clinic", "#about"],
-  ["Patient Stories", "#stories"],
-  ["Advice & Journal", "#journal"],
-];
-
-function Btn({ children, variant = "primary", className = "", ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "outline" | "accent" }) {
-  const v = {
-    primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-    accent: "bg-accent text-accent-foreground hover:bg-accent/90",
-    outline: "border border-primary/20 text-primary hover:bg-secondary",
-  }[variant];
-  return (
-    <button className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition-all ${v} ${className}`} {...p}>
-      {children}
-    </button>
-  );
-}
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-accent">{children}</p>;
-}
-
-function Index() {
+export function HomePage() {
   const [menu, setMenu] = useState(false);
   const [booking, setBooking] = useState<string | null>(null);
-  const [cat, setCat] = useState<Cat>("Routine Foot Care");
+  const [cat, setCat] = useState<TreatmentCategory>("Routine Foot Care");
   const open = (t = "") => setBooking(t);
 
   return (
@@ -96,15 +44,16 @@ function Index() {
       <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 xl:gap-0">
           <a href="#" className="flex shrink-0 items-center gap-2.5" aria-label={`${CLINIC.name} home`}>
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground"><img src="/brand-mark.svg" alt="" className="h-5 w-5" /></span>
-            <span className="font-serif text-xl text-primary">Footwell<span className="text-accent"> Podiatry</span></span>
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground"><Image src="/brand-mark.svg" alt="" width={20} height={20} className="h-5 w-5" /></span>
+            <span className="font-serif text-xl text-heading">Footwell<span className="text-accent"> Podiatry</span></span>
           </a>
           <nav className="hidden min-w-0 items-center gap-5 xl:ml-auto xl:flex" aria-label="Main">
-            {NAV.map(([l, h]) => <a key={h} href={h} className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-primary">{l}</a>)}
-            <Link to="/courses" className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-primary">Online Courses</Link>
+            {PRIMARY_NAVIGATION.map(([l, h]) => <a key={h} href={h} className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-heading">{l}</a>)}
+            <Link href="/courses" className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-heading">Online Courses</Link>
           </nav>
           <div className="flex shrink-0 items-center gap-2 xl:ml-8">
-            <span className="hidden sm:block"><Btn onClick={() => open()}>Book Appointment</Btn></span>
+            <ThemeToggle />
+            <span className="hidden sm:block"><ActionButton onClick={() => open()}>Request Appointment</ActionButton></span>
             <button className="grid h-11 w-11 place-items-center rounded-full border xl:hidden" aria-label="Open menu" aria-expanded={menu} onClick={() => setMenu(true)}><Menu className="h-5 w-5" /></button>
           </div>
         </div>
@@ -115,9 +64,9 @@ function Index() {
           <div className="absolute inset-0 bg-primary/40" onClick={() => setMenu(false)} />
           <div className="absolute right-0 top-0 flex h-full w-80 max-w-full flex-col gap-1 bg-background p-6 animate-in slide-in-from-right">
             <button className="mb-4 self-end grid h-11 w-11 place-items-center rounded-full border" aria-label="Close menu" onClick={() => setMenu(false)}><X className="h-5 w-5" /></button>
-            {NAV.map(([l, h]) => <a key={h} href={h} onClick={() => setMenu(false)} className="rounded-lg px-3 py-3 font-medium hover:bg-secondary">{l}</a>)}
-            <Link to="/courses" onClick={() => setMenu(false)} className="rounded-lg px-3 py-3 font-medium hover:bg-secondary">Online Courses</Link>
-            <Btn className="mt-4" onClick={() => { setMenu(false); open(); }}>Book Appointment</Btn>
+            {PRIMARY_NAVIGATION.map(([l, h]) => <a key={h} href={h} onClick={() => setMenu(false)} className="rounded-lg px-3 py-3 font-medium hover:bg-secondary">{l}</a>)}
+            <Link href="/courses" onClick={() => setMenu(false)} className="rounded-lg px-3 py-3 font-medium hover:bg-secondary">Online Courses</Link>
+            <ActionButton className="mt-4" onClick={() => { setMenu(false); open(); }}>Request Appointment</ActionButton>
           </div>
         </div>
       )}
@@ -126,27 +75,27 @@ function Index() {
         {/* Hero */}
         <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
           <div>
-            <Eyebrow>Private podiatry · Marylebone</Eyebrow>
-            <h1 className="text-4xl leading-[1.08] text-primary sm:text-5xl lg:text-6xl">
+            <SectionEyebrow>Private podiatry · Marylebone</SectionEyebrow>
+            <h1 className="text-4xl leading-[1.08] text-heading sm:text-5xl lg:text-6xl">
               Specialist podiatry and lower-limb care <em className="text-accent">tailored to your movement.</em>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
               Clinically precise assessment, evidence-based treatment and personalised plans that help patients of all ages move without pain.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Btn onClick={() => open()}>Book an Assessment <ArrowRight className="h-4 w-4" /></Btn>
-              <a href="#treatments" className="inline-flex min-h-11 items-center rounded-full border border-primary/20 px-6 text-sm font-semibold text-primary hover:bg-secondary">Explore Treatments</a>
+              <ActionButton onClick={() => open()}>Request an Assessment <ArrowRight className="h-4 w-4" /></ActionButton>
+              <a href="#treatments" className="inline-flex min-h-11 items-center rounded-full border border-primary/20 px-6 text-sm font-semibold text-heading hover:bg-secondary">Explore Treatments</a>
             </div>
             <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t pt-6">
               {[["HCPC", "Registered practitioner"], ["15+ yrs", "NHS & private experience"], ["4.9★", "From 380+ patient reviews"]].map(([a, b]) => (
-                <div key={a}><dt className="font-serif text-2xl text-primary">{a}</dt><dd className="mt-1 text-xs text-muted-foreground">{b}</dd></div>
+                <div key={a}><dt className="font-serif text-2xl text-heading">{a}</dt><dd className="mt-1 text-xs text-muted-foreground">{b}</dd></div>
               ))}
             </dl>
           </div>
           <div className="relative">
-            <img src={clinic} alt="Treatment room at Footwell Podiatry, Marylebone" width={1280} height={1536} className="aspect-[5/6] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/10" />
+            <Image src={clinic} alt="Treatment room at Footwell Podiatry, Marylebone" className="aspect-[5/6] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/10" priority />
             {[["Gait Analysis", "top-8 -left-3 sm:-left-6"], ["Custom Orthotics", "top-1/2 -right-3 sm:-right-6"], ["Nail Surgery", "bottom-10 left-6"]].map(([t, pos]) => (
-              <a key={t} href="#treatments" className={`absolute ${pos} flex items-center gap-2 rounded-full border bg-card/95 px-4 py-2.5 text-sm font-medium text-primary shadow-lg backdrop-blur transition-transform hover:-translate-y-0.5`}>
+              <a key={t} href="#treatments" className={`absolute ${pos} flex items-center gap-2 rounded-full border bg-card/95 px-4 py-2.5 text-sm font-medium text-heading shadow-lg backdrop-blur transition-transform hover:-translate-y-0.5`}>
                 <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />{t}
               </a>
             ))}
@@ -158,13 +107,13 @@ function Index() {
           <div className="mx-auto max-w-7xl px-5">
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div className="max-w-2xl">
-                <Eyebrow>Treatments & services</Eyebrow>
-                <h2 className="text-3xl text-primary sm:text-4xl">Care for every stage of foot health</h2>
+                <SectionEyebrow>Treatments & services</SectionEyebrow>
+                <h2 className="text-3xl text-heading sm:text-4xl">Care for every stage of foot health</h2>
               </div>
               <p className="max-w-sm text-sm text-muted-foreground">Indicative fees shown. Your exact plan is confirmed after assessment. Most major insurers accepted.</p>
             </div>
             <div className="mt-10 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Treatment categories">
-              {CATS.map((c) => (
+              {TREATMENT_CATEGORIES.map((c) => (
                 <button key={c} role="tab" aria-selected={cat === c} onClick={() => setCat(c)}
                   className={`min-h-11 shrink-0 rounded-full border px-5 text-sm font-medium transition-colors ${cat === c ? "border-primary bg-primary text-primary-foreground" : "hover:bg-secondary"}`}>{c}</button>
               ))}
@@ -174,9 +123,9 @@ function Index() {
                 <article key={t.name} className="group rounded-2xl border bg-background p-7 transition-shadow hover:shadow-xl hover:shadow-primary/5 animate-in fade-in">
                   <div className="flex items-start justify-between gap-4">
                     <span className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-accent"><t.icon className="h-6 w-6" aria-hidden /></span>
-                    <div className="text-right"><p className="text-xs text-muted-foreground">From</p><p className="font-serif text-2xl text-primary">£{t.from}</p></div>
+                    <div className="text-right"><p className="text-xs text-muted-foreground">From</p><p className="font-serif text-2xl text-heading">£{t.from}</p></div>
                   </div>
-                  <h3 className="mt-5 text-xl text-primary">{t.name}</h3>
+                  <h3 className="mt-5 text-xl text-heading">{t.name}</h3>
                   <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><Clock className="h-4 w-4" aria-hidden />{t.mins} minutes</p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     <span className="text-xs text-muted-foreground">Helps with:</span>
@@ -218,33 +167,13 @@ function Index() {
         {/* Platform previews */}
         <PlatformPreviews onBook={() => open()} />
 
-        {/* About */}
-        <section id="about" className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-2">
-          <div className="rounded-[2rem] bg-secondary p-8 sm:p-12">
-            <div className="grid h-20 w-20 place-items-center rounded-full bg-primary font-serif text-3xl text-primary-foreground">EH</div>
-            <h2 className="mt-6 text-3xl text-primary">{CLINIC.practitioner}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Lead Podiatrist · BSc (Hons) Podiatry, MChS, HCPC Reg. CH12345</p>
-            <blockquote className="mt-6 border-l-2 border-accent pl-5 font-serif text-xl italic leading-relaxed text-primary">
-              "Feet are rarely the whole story. I look at how you walk, work and train, then build a plan you can realistically follow."
-            </blockquote>
-          </div>
-          <div className="flex flex-col justify-center">
-            <Eyebrow>About the clinic</Eyebrow>
-            <h2 className="text-3xl text-primary sm:text-4xl">Patient-centred, holistic lower-limb care</h2>
-            <p className="mt-5 leading-relaxed text-muted-foreground">After a decade in NHS musculoskeletal and diabetic foot services, Eleanor founded Footwell to offer longer appointments, modern diagnostics and continuity of care with one practitioner.</p>
-            <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-              {["Autoclave-sterilised, single-use instruments", "CQC-aligned infection control", "Step-free ground floor access", "Clear, itemised pricing"].map((x) => (
-                <li key={x} className="flex gap-3 text-sm"><CheckCircle2 className="h-5 w-5 shrink-0 text-accent" aria-hidden />{x}</li>
-              ))}
-            </ul>
-          </div>
-        </section>
+        <PractitionerProfile />
 
         {/* Stories */}
         <section id="stories" className="bg-card py-20">
           <div className="mx-auto max-w-7xl px-5">
-            <Eyebrow>Patient stories</Eyebrow>
-            <h2 className="text-3xl text-primary sm:text-4xl">Recoveries, step by step</h2>
+            <SectionEyebrow>Patient stories</SectionEyebrow>
+            <h2 className="text-3xl text-heading sm:text-4xl">Recoveries, step by step</h2>
             <div className="mt-10 grid gap-6 lg:grid-cols-3">
               {[
                 { n: "Sarah M., 42", c: "Plantar fasciitis", q: "Eight months of morning heel pain gone in ten weeks. The gait video made everything click.", steps: ["Wk 0: Gait assessment", "Wk 2: Orthotics + loading plan", "Wk 10: Back to 10k runs"] },
@@ -254,7 +183,7 @@ function Index() {
                 <figure key={r.n} className="flex flex-col rounded-2xl border bg-background p-7">
                   <div className="flex gap-0.5 text-gold" aria-label="5 out of 5 stars">{[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-current" aria-hidden />)}</div>
                   <span className="mt-4 w-fit rounded-full bg-secondary px-3 py-1 text-xs font-medium text-accent">{r.c}</span>
-                  <blockquote className="mt-4 flex-1 font-serif text-lg leading-relaxed text-primary">"{r.q}"</blockquote>
+                  <blockquote className="mt-4 flex-1 font-serif text-lg leading-relaxed text-heading">&ldquo;{r.q}&rdquo;</blockquote>
                   <ol className="mt-6 space-y-2 border-l border-accent/30 pl-4">
                     {r.steps.map((s) => <li key={s} className="relative text-xs text-muted-foreground before:absolute before:-left-[1.3rem] before:top-1 before:h-2 before:w-2 before:rounded-full before:bg-accent">{s}</li>)}
                   </ol>
@@ -267,8 +196,8 @@ function Index() {
 
         {/* Journal */}
         <section id="journal" className="mx-auto max-w-7xl px-5 py-20">
-          <Eyebrow>Advice & journal</Eyebrow>
-          <h2 className="text-3xl text-primary sm:text-4xl">Clinical insights</h2>
+          <SectionEyebrow>Advice & journal</SectionEyebrow>
+          <h2 className="text-3xl text-heading sm:text-4xl">Clinical insights</h2>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {[
               { t: "Recognising the Early Signs of Plantar Fasciitis", e: "Sharp heel pain with your first steps in the morning is the classic warning sign. Here's what to try first, and when to seek help.", r: 6 },
@@ -276,9 +205,9 @@ function Index() {
               { t: "How to Prevent Recurrent Ingrown Nails", e: "Cutting technique, footwear and when partial nail surgery offers a 95%+ long-term success rate.", r: 5 },
             ].map((a, i) => (
               <article key={a.t} className="group rounded-2xl border bg-card p-7 transition-shadow hover:shadow-xl hover:shadow-primary/5">
-                <div className={`mb-6 h-36 rounded-xl ${["bg-secondary", "bg-accent/15", "bg-gold/15"][i]}`} aria-hidden />
+                <div className={`mb-6 h-36 rounded-xl ${["bg-secondary", "bg-accent-soft", "bg-gold/15"][i]}`} aria-hidden />
                 <p className="text-xs text-muted-foreground">{a.r} min read · Reviewed by {CLINIC.practitioner}</p>
-                <h3 className="mt-3 text-xl leading-snug text-primary group-hover:text-accent transition-colors">{a.t}</h3>
+                <h3 className="mt-3 text-xl leading-snug text-heading group-hover:text-accent transition-colors">{a.t}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{a.e}</p>
               </article>
             ))}
@@ -289,8 +218,8 @@ function Index() {
         <section id="symptoms" className="bg-secondary py-20">
           <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2">
             <div>
-              <Eyebrow>Questions</Eyebrow>
-              <h2 className="text-3xl text-primary sm:text-4xl">Before your visit</h2>
+              <SectionEyebrow>Questions</SectionEyebrow>
+              <h2 className="text-3xl text-heading sm:text-4xl">Before your visit</h2>
               <div className="mt-8 divide-y rounded-2xl border bg-card">
                 {[
                   ["Do I need a GP or NHS referral?", "No. You can self-refer for private podiatry. NHS podiatry is available via your GP but waiting times vary by area and eligibility criteria apply."],
@@ -336,18 +265,19 @@ function Index() {
           <div className="mx-auto max-w-7xl space-y-3 px-5 py-6 text-xs text-primary-foreground/60">
             <p>{CLINIC.practitioner} is registered with the Health and Care Professions Council (HCPC) and is a member of the Royal College of Podiatry. Information on this site is for general education and does not replace individual clinical advice. In an emergency, call 999 or contact NHS 111.</p>
             <div className="flex flex-wrap gap-5">
-              <span>© 2026 Footwell Podiatry (demonstration brand)</span>
+              <span>© 2026 Footwell Podiatry</span>
               <a href="#" className="hover:underline">Privacy policy</a><a href="#" className="hover:underline">Accessibility</a><a href="#" className="hover:underline">Complaints procedure</a>
             </div>
           </div>
         </div>
       </footer>
 
-      {booking !== null && <BookingModal initial={booking} onClose={() => setBooking(null)} />}
+      {booking !== null && <BookingModal initialTreatment={booking} onClose={() => setBooking(null)} />}
     </div>
   );
 }
 
+/* Legacy implementations moved into focused home and booking components.
 function PlatformPreviews({ onBook }: { onBook: () => void }) {
   const [mic, setMic] = useState(true);
   const [cam, setCam] = useState(true);
@@ -399,7 +329,9 @@ function PlatformPreviews({ onBook }: { onBook: () => void }) {
     </section>
   );
 }
+*/
 
+/* Legacy implementations moved into focused home and booking components.
 function SymptomFinder({ onBook }: { onBook: (t: string) => void }) {
   const Q = [
     { q: "Where is the discomfort?", o: ["Heel or arch", "Toenail", "Knee, shin or hip", "Skin or general"] },
@@ -442,8 +374,41 @@ function BookingModal({ initial, onClose }: { initial: string; onClose: () => vo
   const [day, setDay] = useState<number | null>(null);
   const [time, setTime] = useState<string | null>(null);
   const [mode, setMode] = useState("In clinic");
+  const [documents, setDocuments] = useState<File[]>([]);
+  const [documentError, setDocumentError] = useState("");
+  const [isDraggingDocuments, setIsDraggingDocuments] = useState(false);
+  const documentInputRef = useRef<HTMLInputElement>(null);
   const days = Array.from({ length: 10 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() + i + 1); return d; }).filter((d) => d.getDay() !== 0);
   const steps = ["Treatment", "Date & time", "Preferences", "Confirm"];
+  const addDocuments = (files: FileList | File[]) => {
+    const validDocuments: File[] = [];
+    const errors: string[] = [];
+
+    Array.from(files).forEach((file) => {
+      const extension = file.name.split(".").pop()?.toLowerCase();
+      const acceptedFileTypes: Record<string, string[]> = {
+        pdf: ["application/pdf"],
+        jpg: ["image/jpeg", "image/jpg"],
+        jpeg: ["image/jpeg", "image/jpg"],
+        png: ["image/png"],
+      };
+
+      if (!extension || !acceptedFileTypes[extension] || (file.type && !acceptedFileTypes[extension].includes(file.type))) {
+        errors.push(`${file.name}: PDF, JPG, JPEG and PNG files are supported.`);
+      } else if (file.size > 10 * 1024 * 1024) {
+        errors.push(`${file.name}: files must be 10 MB or smaller.`);
+      } else {
+        validDocuments.push(file);
+      }
+    });
+
+    if (validDocuments.length) {
+      setDocuments((current) => [...current, ...validDocuments]);
+    }
+    setDocumentError(errors.join(" "));
+  };
+  const documentType = (file: File) => file.name.split(".").pop()?.toUpperCase() ?? "Document";
+  const documentSize = (size: number) => size < 1024 * 1024 ? `${Math.max(1, Math.round(size / 1024))} KB` : `${(size / (1024 * 1024)).toFixed(1)} MB`;
   return (
     <div className="fixed inset-0 z-50 grid place-items-center p-4" role="dialog" aria-modal="true" aria-label="Book an appointment">
       <div className="absolute inset-0 bg-primary/50 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
@@ -471,6 +436,39 @@ function BookingModal({ initial, onClose }: { initial: string; onClose: () => vo
           {["In clinic", "Video consultation"].map((m) => (
             <label key={m} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 text-sm ${mode === m ? "border-accent bg-secondary" : ""}`}>
               <input type="radio" name="mode" checked={mode === m} onChange={() => setMode(m)} className="accent-[var(--accent)]" />{m}</label>))}
+          <section className="rounded-xl border p-4" aria-labelledby="supporting-documents-heading">
+            <h3 id="supporting-documents-heading" className="text-sm font-semibold">Supporting Documents</h3>
+            <p id="supporting-documents-help" className="mt-1 text-sm text-muted-foreground">Upload any relevant medical documents to help your podiatrist prepare for your appointment. This is optional.</p>
+            <div
+              className={`mt-3 rounded-xl border border-dashed p-4 text-center transition-colors ${isDraggingDocuments ? "border-accent bg-secondary" : "border-border"}`}
+              onDragOver={(event) => { event.preventDefault(); setIsDraggingDocuments(true); }}
+              onDragLeave={() => setIsDraggingDocuments(false)}
+              onDrop={(event) => { event.preventDefault(); setIsDraggingDocuments(false); addDocuments(event.dataTransfer.files); }}
+              aria-describedby="supporting-documents-help"
+            >
+              <Upload className="mx-auto h-5 w-5 text-muted-foreground" aria-hidden="true" />
+              <p className="mt-2 text-sm font-medium">Drag and drop documents here</p>
+              <p className="mt-1 text-xs text-muted-foreground">PDF, JPG, JPEG or PNG · up to 10 MB per file</p>
+              <input
+                ref={documentInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                className="sr-only"
+                aria-describedby="supporting-documents-help"
+                onChange={(event) => { if (event.target.files) addDocuments(event.target.files); event.currentTarget.value = ""; }}
+              />
+              <Btn type="button" variant="outline" className="mt-3" onClick={() => documentInputRef.current?.click()}>Choose Files</Btn>
+            </div>
+            {documentError && <p className="mt-3 text-sm text-destructive" role="alert">{documentError}</p>}
+            {documents.length > 0 && <ul className="mt-3 space-y-2" aria-label="Selected documents">
+              {documents.map((file, index) => <li key={`${file.name}-${file.lastModified}-${index}`} className="flex items-center gap-3 rounded-lg bg-secondary p-3 text-sm">
+                <FileText className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span className="min-w-0 flex-1 break-all"><span className="block font-medium">{file.name}</span><span className="text-xs text-muted-foreground">{documentType(file)} · {documentSize(file.size)}</span></span>
+                <button type="button" onClick={() => setDocuments((current) => current.filter((_, itemIndex) => itemIndex !== index))} className="min-h-11 rounded-full px-3 text-sm font-medium text-primary hover:bg-background" aria-label={`Remove ${file.name}`}>Remove</button>
+              </li>)}
+            </ul>}
+          </section>
           <label className="block text-sm font-medium">Anything we should know?<textarea className="mt-2 w-full rounded-xl border bg-background p-3 text-sm" rows={3} placeholder="e.g. heel pain for three months" /></label>
           <Btn className="w-full" onClick={() => setStep(3)}>Review booking</Btn>
         </div>}
@@ -479,6 +477,7 @@ function BookingModal({ initial, onClose }: { initial: string; onClose: () => vo
           <CheckCircle2 className="mx-auto h-14 w-14 text-accent" aria-hidden />
           <p className="mt-4 font-serif text-xl text-primary">{t}</p>
           <p className="mt-1 text-sm text-muted-foreground">{day !== null && days[day]?.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })} at {time} · {mode}</p>
+          {documents.length > 0 && <p className="mt-2 text-sm text-muted-foreground">{documents.length} supporting document{documents.length === 1 ? "" : "s"} selected for this booking preview.</p>}
           <p className="mt-6 rounded-xl bg-secondary p-4 text-xs text-muted-foreground">This is a design preview. In the live platform, you would receive a confirmation email and optional secure payment link.</p>
           <Btn className="mt-6" onClick={onClose}>Done</Btn>
         </div>}
@@ -486,3 +485,4 @@ function BookingModal({ initial, onClose }: { initial: string; onClose: () => vo
     </div>
   );
 }
+*/
