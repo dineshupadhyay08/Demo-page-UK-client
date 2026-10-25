@@ -47,11 +47,11 @@ export function HomePage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground"><Image src="/brand-mark.svg" alt="" width={20} height={20} className="h-5 w-5" /></span>
             <span className="font-serif text-xl text-heading">Footwell<span className="text-accent"> Podiatry</span></span>
           </a>
-          <nav className="hidden min-w-0 items-center gap-5 xl:ml-auto xl:flex" aria-label="Main">
+          <nav className="hidden shrink-0 items-center gap-5 xl:ml-4 xl:flex" aria-label="Main">
             {PRIMARY_NAVIGATION.map(([l, h]) => <a key={h} href={h} className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-heading">{l}</a>)}
             <Link href="/courses" className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-heading">Online Courses</Link>
           </nav>
-          <div className="flex shrink-0 items-center gap-2 xl:ml-8">
+          <div className="flex shrink-0 items-center gap-2 xl:ml-4">
             <ThemeToggle />
             <span className="hidden sm:block"><ActionButton onClick={() => open()}>Request Appointment</ActionButton></span>
             <button className="grid h-11 w-11 place-items-center rounded-full border xl:hidden" aria-label="Open menu" aria-expanded={menu} onClick={() => setMenu(true)}><Menu className="h-5 w-5" /></button>
