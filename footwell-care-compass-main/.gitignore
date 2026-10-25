@@ -8,17 +8,19 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
-dist-ssr
+.next
 .output
-.vinxi
-.tanstack/**
-.nitro
+.wrangler/
+*.tsbuildinfo
 *.local
+.env
+.env.*
+!.env.example
 
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+migration-backups/
 
 # Editor directories and files
 .vscode/*
