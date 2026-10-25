@@ -1,0 +1,10 @@
+<svg width="720" height="860" viewBox="0 0 720 860" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">Temporary practitioner portrait placeholder</title>
+  <desc id="description">A neutral silhouette used until an approved practitioner portrait is supplied.</desc>
+  <rect width="720" height="860" fill="#F0F4F2"/>
+  <circle cx="360" cy="294" r="122" fill="#D7E2DD"/>
+  <path d="M151 724C151 585.929 245.771 474 360 474C474.229 474 569 585.929 569 724V860H151V724Z" fill="#0F2E2E"/>
+  <path d="M231 860V726C231 654.203 289.203 596 361 596C432.797 596 491 654.203 491 726V860H231Z" fill="#2D7A68"/>
+  <rect x="186" y="764" width="348" height="52" rx="26" fill="#FBFBF9"/>
+  <text x="360" y="797" text-anchor="middle" fill="#0F2E2E" font-family="Arial, sans-serif" font-size="20" font-weight="600">Temporary portrait placeholder</text>
+</svg>
