@@ -59,17 +59,17 @@ function subscribeToThemeChanges(onStoreChange: () => void) {
   };
 }
 
-function getResolvedThemeSnapshot() {
+function getResolvedThemeSnapshot(): ResolvedTheme {
   return getResolvedTheme(getInitialTheme());
 }
 
 export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const theme = useSyncExternalStore(
+  const theme = useSyncExternalStore<ThemePreference>(
     subscribeToThemeChanges,
     getInitialTheme,
     () => "system",
   );
-  const resolvedTheme = useSyncExternalStore(
+  const resolvedTheme = useSyncExternalStore<ResolvedTheme>(
     subscribeToThemeChanges,
     getResolvedThemeSnapshot,
     () => "light",
@@ -88,7 +88,7 @@ export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode
     window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   }, []);
 
-  const value = useMemo(
+  const value = useMemo<ThemeContextValue>(
     () => ({ theme, resolvedTheme, setTheme }),
     [resolvedTheme, setTheme, theme],
   );
