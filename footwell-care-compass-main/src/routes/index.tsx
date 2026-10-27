@@ -77,7 +77,7 @@ export function HomePage() {
           <div>
             <SectionEyebrow>Private podiatry · Marylebone</SectionEyebrow>
             <h1 className="text-4xl leading-[1.08] text-heading sm:text-5xl lg:text-6xl">
-              Specialist podiatry and lower-limb care <em className="text-accent">tailored to your movement.</em>
+              Specialist podiatry and lower-limb care <em className="text-[#328673]">tailored to your movement.</em>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
               Clinically precise assessment, evidence-based treatment and personalised plans that help patients of all ages move without pain.
@@ -93,7 +93,7 @@ export function HomePage() {
             </dl>
           </div>
           <div className="relative">
-            <Image src={clinic} alt="Treatment room at Footwell Podiatry, Marylebone" className="aspect-[5/6] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/10" priority />
+            <Image src={clinic} alt="Treatment room at Footwell Podiatry, Marylebone" className="aspect-[5/6] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/10 dark:brightness-110 dark:saturate-90" priority />
             {[["Gait Analysis", "top-8 -left-3 sm:-left-6"], ["Custom Orthotics", "top-1/2 -right-3 sm:-right-6"], ["Nail Surgery", "bottom-10 left-6"]].map(([t, pos]) => (
               <a key={t} href="#treatments" className={`absolute ${pos} flex items-center gap-2 rounded-full border bg-card/95 px-4 py-2.5 text-sm font-medium text-heading shadow-lg backdrop-blur transition-transform hover:-translate-y-0.5`}>
                 <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />{t}

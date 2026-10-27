@@ -5,14 +5,13 @@ import { useTheme, type ThemePreference } from "@/components/theme/ThemeProvider
 
 const themeOrder: ThemePreference[] = ["light", "dark", "system"];
 
-function nextTheme(theme: ThemePreference) {
+export function nextTheme(theme: ThemePreference) {
   return themeOrder[(themeOrder.indexOf(theme) + 1) % themeOrder.length] ?? "system";
 }
 
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme();
   const next = nextTheme(theme);
-  const ThemeIcon = resolvedTheme === "dark" ? Moon : Sun;
   const currentLabel = theme === "system" ? `System (${resolvedTheme})` : theme;
 
   return (
@@ -23,7 +22,8 @@ export function ThemeToggle() {
       aria-label={`Colour theme: ${currentLabel}. Activate to use ${next}.`}
       title={`Theme: ${currentLabel}. Switch to ${next}.`}
     >
-      <ThemeIcon className="h-5 w-5" aria-hidden="true" />
+      <Sun className="h-5 w-5 dark:hidden" aria-hidden="true" />
+      <Moon className="hidden h-5 w-5 dark:block" aria-hidden="true" />
       <span className="sr-only">Theme: {currentLabel}</span>
     </button>
   );
