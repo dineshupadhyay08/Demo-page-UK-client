@@ -1,0 +1,676 @@
+[
+  {
+    "slug": "recognising-early-signs-of-plantar-fasciitis",
+    "title": "Recognising the Early Signs of Plantar Fasciitis",
+    "excerpt": "Sharp heel pain with your first steps in the morning is a common warning sign. Understand possible causes, practical care approaches and when to seek professional advice.",
+    "category": "Foot Conditions",
+    "tags": [
+      "heel-pain",
+      "footwear",
+      "orthoses"
+    ],
+    "status": "awaiting-review",
+    "updatedAt": "2026-11-01",
+    "image": {
+      "src": "/journal/heel-assessment.webp",
+      "alt": "Illustrative heel assessment showing a gloved hand supporting the heel and the natural arch of a foot",
+      "source": "Original AI-generated editorial illustration of a heel assessment; not a real patient or diagnostic demonstration.",
+      "rights": "Original generated asset for this project; clinical image review pending.",
+      "approved": false
+    },
+    "sections": [
+      {
+        "id": "overview",
+        "heading": "What is plantar fasciitis?",
+        "paragraphs": [
+          "The plantar fascia is a strong band beneath the foot, linking the heel with the forefoot and helping support the arch. Plantar fasciitis describes a common pattern of pain around its heel attachment. The term is useful, but a symptom checklist cannot establish the diagnosis.",
+          "Think of this article as preparation for a conversation, rather than a test you must pass before seeking care. Where the pain occurs, when it began and what changed around that time all help a clinician understand the problem."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "first-steps",
+        "heading": "Why do the first steps after rest hurt?",
+        "paragraphs": [
+          "Pain beneath the heel that is particularly noticeable after sleeping or sitting is a familiar presentation. It may ease as you move, then return with prolonged loading. A temporary improvement during a walk does not mean the problem has disappeared.",
+          "After rest, returning load to sensitive tissues may be uncomfortable. Morning pain is a pattern to describe to your clinician, not proof of inflammation or a particular tissue injury. Note whether discomfort is underneath the heel, behind it or elsewhere."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "other-causes",
+        "heading": "Could heel pain have another cause?",
+        "paragraphs": [
+          "Pain behind the heel may involve the Achilles tendon; swelling and aching can have other explanations, including bursitis. An injury accompanied by a snap, marked swelling or difficulty walking needs a different assessment from gradually developing first-step pain.",
+          "Contact NHS 111 for severe pain after injury, a changed foot shape, inability to walk, or a snapping sound with injury. Do not test a suspected fracture by repeatedly stretching or trying to run on it. Tingling or reduced sensation also warrants assessment."
+        ],
+        "references": [
+          3
+        ]
+      },
+      {
+        "id": "load",
+        "heading": "What changes can contribute?",
+        "paragraphs": [
+          "A sudden increase in walking, running or standing can increase demand on the heel. Calf tightness, exercise on hard surfaces and footwear with limited support or cushioning may contribute. There is often more than one factor.",
+          "Record your usual activity alongside recent changes: a new job involving standing, a longer commute, a different running route or a new pair of shoes. Avoid blaming one feature of your foot without assessment; appearance alone does not explain every painful heel."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "self-care",
+        "heading": "What can I safely try first?",
+        "paragraphs": [
+          "Reduce activities that clearly aggravate symptoms while finding comfortable ways to stay active. Supportive, cushioned footwear or a suitable heel pad may help. Avoid long periods barefoot on hard floors if these provoke pain.",
+          "A wrapped cold pack may help some people. Ask a pharmacist about pain relief appropriate to your health and medicines. Do not apply ice directly to skin; seek individual advice if sensation or circulation is impaired."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "exercise",
+        "heading": "How should stretching and exercise fit in?",
+        "paragraphs": [
+          "Gentle calf and plantar-fascia stretching can form part of management. The right exercise, starting load and progression depend on your symptoms and capacity. More forceful stretching is not automatically more helpful.",
+          "Ask a clinician to demonstrate the movement and explain what response is acceptable during and afterwards. Stop an exercise that causes pain or makes you unwell and seek advice. A structured plan should account for work, footwear and activity, rather than consist only of an insole or one exercise."
+        ],
+        "references": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "id": "assessment",
+        "heading": "What happens during professional assessment?",
+        "paragraphs": [
+          "Bring the shoes you use most and explain how the pain affects walking, work and sleep. A clinician may examine the foot and ankle, review movement and discuss other health conditions. Ask what findings support the diagnosis and whether anything suggests a different cause.",
+          "Agree on an achievable goal, such as a more comfortable commute, and a review point. Imaging or referral is a clinical decision; neither should be assumed from an online description."
+        ],
+        "references": [
+          2,
+          4
+        ]
+      },
+      {
+        "id": "options",
+        "heading": "What if symptoms persist?",
+        "paragraphs": [
+          "Management may combine education, activity adjustment, rehabilitation and suitable footwear. Orthoses can be one part of a wider plan, with benefit judged by comfort and function. Custom devices are not automatically required for heel pain.",
+          "Persistent symptoms may lead to discussion of other treatments, including night splints, injections or shockwave therapy. Their suitability and risks need an individual discussion. Surgery is not the usual first step."
+        ],
+        "references": [
+          1,
+          4
+        ]
+      },
+      {
+        "id": "seek-help",
+        "heading": "When should I arrange help?",
+        "paragraphs": [
+          "Arrange assessment if pain is severe, keeps returning, limits normal activities or has not improved after two weeks of self-care. If you have diabetes and foot pain, seek professional advice rather than relying on an internet exercise plan.",
+          "For your appointment, write down onset, exact location, symptoms after rest, changes in activity and anything already tried. Include medicines and relevant health conditions. This helps make the consultation more useful without requiring you to diagnose yourself."
+        ],
+        "references": [
+          1,
+          3
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Does every painful heel mean plantar fasciitis?",
+        "answer": "No. Location and timing provide clues, but injury, tendon problems and other conditions need consideration."
+      },
+      {
+        "question": "Do I need custom orthotics?",
+        "answer": "Not necessarily. Device choice should follow assessment and be considered alongside rehabilitation and footwear."
+      },
+      {
+        "question": "Can I keep exercising?",
+        "answer": "Discuss a comfortable level and gradual progression. Avoid pushing through worsening symptoms or treating a recent injury as routine plantar fasciitis."
+      }
+    ],
+    "references": [
+      {
+        "organisation": "NHS",
+        "title": "Plantar fasciitis",
+        "url": "https://www.nhs.uk/conditions/plantar-fasciitis/",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Royal Orthopaedic Hospital",
+        "title": "Plantar Fasciitis",
+        "url": "https://roh.nhs.uk/services-information/foot-and-ankle/plantar-fasciitis",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "NHS",
+        "title": "Heel pain",
+        "url": "https://www.nhs.uk/symptoms/foot-pain/heel-pain/",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Journal of Orthopaedic & Sports Physical Therapy",
+        "title": "Heel Pain – Plantar Fasciitis: Revision 2023",
+        "url": "https://www.orthopt.org/uploads/content_files/files/koc_et_al_2023_heel_pain_plantar_fasciitis_revision_2023.pdf",
+        "accessedAt": "2026-11-01"
+      }
+    ],
+    "seoDescription": "Morning heel pain can suggest plantar fasciitis, but other conditions can look similar. Understand the pattern, sensible first steps and when to get assessed.",
+    "publicPreview": true,
+    "readingTimeMinutes": 6
+  },
+  {
+    "slug": "custom-orthotics-vs-off-the-shelf-insoles",
+    "title": "Custom Orthotics vs Off-the-Shelf Insoles",
+    "excerpt": "Understand the differences between prefabricated insoles and custom orthoses, including their uses, benefits and limitations.",
+    "category": "Orthotics & Biomechanics",
+    "tags": [
+      "orthoses",
+      "heel-pain",
+      "footwear"
+    ],
+    "status": "awaiting-review",
+    "updatedAt": "2026-11-01",
+    "image": {
+      "src": "/journal/orthotics.webp",
+      "alt": "Illustrative cushioned and contoured insoles beside an unbranded walking shoe",
+      "source": "Original AI-generated editorial still life created for this project; not a photograph of a prescribed device.",
+      "rights": "Generated asset; no third-party photograph used. Editorial suitability requires clinic approval.",
+      "approved": false
+    },
+    "sections": [
+      {
+        "id": "definitions",
+        "heading": "What are foot orthoses?",
+        "paragraphs": [
+          "Foot orthoses are inserts worn inside footwear to support the foot, redistribute load or address a specific functional need. Some provide simple cushioning; others are prescribed to achieve particular goals. The label orthotic does not identify one standard device.",
+          "A useful starting question is not which type is most expensive, but what problem the device is intended to help. Ask how success will be assessed: for example, more comfortable walking, improved tolerance of work or protection of a vulnerable area."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "prefabricated",
+        "heading": "What is a prefabricated insole?",
+        "paragraphs": [
+          "A prefabricated device is made in standard sizes or shapes and selected to suit the wearer. It can be a reasonable option for some symptoms. A clinician may select or adapt a prefabricated device; buying off the shelf and receiving a clinically chosen device are not necessarily the same process.",
+          "Check how the insert sits in your actual shoe. More cushioning is not useful if the extra thickness leaves toes compressed or the heel slipping. Bring both the device and footwear to a review if the combination feels wrong."
+        ],
+        "references": [
+          1,
+          3
+        ]
+      },
+      {
+        "id": "custom",
+        "heading": "What makes a device custom-made?",
+        "paragraphs": [
+          "Custom devices are produced for an individual's prescription, often using an impression or scan alongside clinical assessment. Design, material, shape and intended purpose can vary. The manufacturing technique alone does not establish that a device is suitable or better.",
+          "A prescription should explain the clinical goal, why a particular design is proposed and how adjustments will be handled. An attractive scan or a detailed explanation of foot shape should not replace a discussion of symptoms and practical needs."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "evidence",
+        "heading": "Are custom orthotics always better?",
+        "paragraphs": [
+          "No. A CADTH review found no difference in pain or functional outcomes between custom and prefabricated orthoses in the adult plantar-heel-pain evidence it examined. The authors also highlighted limitations in the evidence. This does not establish that every device is interchangeable for every condition.",
+          "Research about plantar heel pain should not be extended automatically to pressure protection, complex deformity or other clinical situations. Ask whether the evidence being discussed applies to your diagnosis and the outcomes that matter to you."
+        ],
+        "references": [
+          1
+        ]
+      },
+      {
+        "id": "assessment",
+        "heading": "What should assessment consider?",
+        "paragraphs": [
+          "Assessment may include symptoms, joint movement, strength, skin condition, footwear and walking. Bring your most-used shoes, previous inserts and a description of the activities that are difficult. Mention altered sensation, circulation concerns and diabetes.",
+          "Discuss alternatives as well as devices. A plan may involve exercise, footwear changes or another treatment. Ask what the next step would be if the initial option fails, rather than assuming a more expensive insert must be the answer."
+        ],
+        "references": [
+          2,
+          4
+        ]
+      },
+      {
+        "id": "adaptation",
+        "heading": "How do I get used to insoles?",
+        "paragraphs": [
+          "Follow the individual wearing-in instructions supplied with your device. Start with manageable periods rather than using a new insert for a long shift or demanding sports session immediately. Advice varies between services and prescriptions, so a generic timetable should not override your clinician's plan.",
+          "Persistent discomfort, rubbing, blisters or worsening symptoms require review. Do not treat pain as evidence that the device is correcting your feet. People with reduced sensation should inspect the skin carefully and seek tailored advice."
+        ],
+        "references": [
+          3,
+          4
+        ]
+      },
+      {
+        "id": "footwear",
+        "heading": "Which shoes should I use?",
+        "paragraphs": [
+          "The shoe needs enough space for your foot and the device together. Adjustable fastening and a secure fit help keep the insert positioned. Some ordinary shoes have removable liners; prescribed footwear or insoles should not be altered without advice.",
+          "Take the inserts when trying shoes. Ask the prescriber before cutting, heating or modifying a device. If you cannot use it in the footwear needed for your job, raise that practical constraint before purchasing."
+        ],
+        "references": [
+          3,
+          5
+        ]
+      },
+      {
+        "id": "cost-care",
+        "heading": "What should I ask about price and maintenance?",
+        "paragraphs": [
+          "Request an itemised explanation of what a quotation includes: assessment, device, fitting, adjustments and follow-up. Ask about replacement and review arrangements without assuming that a particular lifespan or outcome is guaranteed.",
+          "Inspect inserts for damage and follow their cleaning instructions. NHS orthotics advice commonly recommends gentle cleaning and drying away from direct heat. Return for review if rubbing, soreness or deterioration develops; do not keep wearing a damaged device simply because it was costly."
+        ],
+        "references": [
+          5
+        ]
+      },
+      {
+        "id": "decision",
+        "heading": "How can I make a useful decision?",
+        "paragraphs": [
+          "Ask four questions: What is the working diagnosis? What is the device intended to change? Why is this option appropriate? When will we review its effect? Record the answers so you can judge progress against an agreed goal.",
+          "A lower-cost option is not automatically inadequate, and a custom device is not automatically unnecessary. The decision should connect a clinical finding with a practical treatment aim, your footwear and your preferences."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Will an orthotic permanently change my foot shape?",
+        "answer": "Do not assume that it will. Ask what benefit is intended while you wear it and how progress will be assessed."
+      },
+      {
+        "question": "Should I wear painful insoles until I adapt?",
+        "answer": "Persistent pain, skin damage or worsening symptoms need review. Contact the prescriber rather than forcing continued use."
+      },
+      {
+        "question": "Can I move inserts between shoes?",
+        "answer": "Only when the fit and positioning remain appropriate. Bring the shoes and devices to your clinician if unsure."
+      }
+    ],
+    "references": [
+      {
+        "organisation": "CADTH / NCBI Bookshelf",
+        "title": "Custom-Made Foot Orthoses versus Prefabricated Foot Orthoses: A Review of Clinical Effectiveness and Cost-Effectiveness",
+        "url": "https://www.ncbi.nlm.nih.gov/books/NBK549527/",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Dorset County Hospital",
+        "title": "Insoles (Foot Orthoses)",
+        "url": "https://dchft.nhs.uk/leaflets/insoles-foot-orthoses/",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Royal National Orthopaedic Hospital",
+        "title": "A Patient's Guide to Foot Orthosis",
+        "url": "https://www.rnoh.nhs.uk/patients-and-visitors/patient-information-guides/foot-orthosis-patients-guide",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Dorset HealthCare",
+        "title": "A guide to your insoles",
+        "url": "https://www.dorsethealthcare.nhs.uk/our-services-and-sites/physical-health/orthotics-insoles-braces-and-supports/guide-your-insoles",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Northern Care Alliance",
+        "title": "Orthotics – Insoles",
+        "url": "https://www.northerncarealliance.nhs.uk/patient-information/patient-leaflets/orthotics-insoles",
+        "accessedAt": "2026-11-01"
+      }
+    ],
+    "seoDescription": "Understand what shoe inserts can offer, how custom and prefabricated devices differ, and why assessment matters more than a universal best option.",
+    "publicPreview": true,
+    "readingTimeMinutes": 8
+  },
+  {
+    "slug": "preventing-recurrent-ingrown-nails",
+    "title": "How to Prevent Recurrent Ingrown Nails",
+    "excerpt": "Learn about nail-cutting technique, footwear, prevention and professional treatment options for recurring ingrown toenails.",
+    "category": "Nail & Skin Health",
+    "tags": [
+      "nails",
+      "footwear",
+      "prevention"
+    ],
+    "status": "awaiting-review",
+    "updatedAt": "2026-11-01",
+    "image": {
+      "src": "/journal/ingrown-nails.jpg",
+      "alt": "Clean toenails resting on a soft towel beside everyday foot-care items",
+      "source": "Supplied project asset; original photographer and licence not documented in repository.",
+      "rights": "Clinic must confirm usage rights before publication.",
+      "approved": false
+    },
+    "sections": [
+      {
+        "id": "meaning",
+        "heading": "What is an ingrown toenail?",
+        "paragraphs": [
+          "An ingrown nail presses or grows into the surrounding skin. The big toe is commonly affected, although other toes can be involved. Pain, swelling and redness can occur, and infection may develop.",
+          "Repeated episodes deserve assessment rather than repeated digging at the same corner. Keep a note of which side becomes sore, how often it happens and whether shoes, sport or nail cutting seem to trigger it."
+        ],
+        "references": [
+          1
+        ]
+      },
+      {
+        "id": "contributing",
+        "heading": "Why can it keep coming back?",
+        "paragraphs": [
+          "Nail-cutting technique and pressure from poorly fitting footwear can contribute. Nail shape or deformity may also be relevant to treatment planning. A clinician can examine the nail and surrounding tissue before deciding whether simple care, conservative treatment or a procedure is suitable.",
+          "Describe previous treatments and how long any improvement lasted. Tell the clinician if you have diabetes, reduced sensation, circulation problems or a history of difficult healing; these affect how care should be planned."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "routine-care",
+        "heading": "How should an unaffected nail be cut?",
+        "paragraphs": [
+          "For prevention, cut toenails across rather than digging down the edges, and avoid cutting them too short. Keep feet clean and dry. If you cannot see or reach the nails safely, ask for professional help rather than attempting difficult cutting.",
+          "An already painful ingrown nail is different from routine trimming. NHS advice is to avoid cutting or picking at the affected nail while it grows out. Do not perform a home nail-removal procedure or try to extract a deep corner with sharp tools."
+        ],
+        "references": [
+          1
+        ]
+      },
+      {
+        "id": "shoes",
+        "heading": "How does footwear matter?",
+        "paragraphs": [
+          "Choose footwear that does not squeeze the toe or force the nail against surrounding skin. Consider the shoes used for work and sport as well as everyday walking. Tight, pointed styles may continue to irritate an otherwise improving toe.",
+          "Bring a commonly worn pair to assessment if pressure is a recurring concern. Changing shoes can reduce irritation, but it does not establish that footwear was the only cause or that an infected toe needs no treatment."
+        ],
+        "references": [
+          1
+        ]
+      },
+      {
+        "id": "infection",
+        "heading": "Which symptoms need professional help?",
+        "paragraphs": [
+          "Arrange medical advice for a painful, swollen toe with pus, symptoms that are not improving, or an ingrown nail in someone with diabetes. Feeling hot, cold or shivery or having a very high temperature also requires medical attention.",
+          "Do not rely on a photograph or colour alone to decide whether there is infection. Report changes in pain, swelling, discharge and how you feel overall. If you cannot reach your usual clinician and symptoms are concerning, use NHS 111 for advice."
+        ],
+        "references": [
+          1,
+          3
+        ]
+      },
+      {
+        "id": "conservative",
+        "heading": "Does every ingrown nail need surgery?",
+        "paragraphs": [
+          "No. Examination and the severity and recurrence of symptoms guide treatment. A GP may address infection, while a podiatrist may offer nail care or discuss removal of part or all of a problematic nail.",
+          "Ask what each option is intended to achieve and what would make a procedure more appropriate. Previous recurrence does not remove the need to discuss alternatives, personal risks and the practical consequences of treatment."
+        ],
+        "references": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "procedure",
+        "heading": "What is partial nail avulsion?",
+        "paragraphs": [
+          "Partial nail avulsion removes a problematic portion of nail, usually after local anaesthetic. In some procedures, the nail-producing area is treated with phenol to reduce regrowth. Whole-nail removal is a different option and is not necessary for everyone.",
+          "Consent should include the expected appearance, healing, possible recurrence, infection and other relevant risks. No success percentage is promised here. The clinician should explain the technique they propose and the evidence relevant to it."
+        ],
+        "references": [
+          2,
+          4
+        ]
+      },
+      {
+        "id": "aftercare",
+        "heading": "What should I expect during recovery?",
+        "paragraphs": [
+          "Follow the dressing and wound-care instructions given by the treating service. Healing can take weeks and varies with the procedure and individual factors. Different NHS leaflets give different typical ranges; none is a guaranteed recovery date.",
+          "Plan around footwear, transport, work and activities. Ask who will review the wound and whom to contact if it becomes more painful or appears infected. Do not replace the treating clinician's instructions with a generic online soaking or dressing schedule."
+        ],
+        "references": [
+          3,
+          4
+        ]
+      },
+      {
+        "id": "preparation",
+        "heading": "What should I discuss before treatment?",
+        "paragraphs": [
+          "Bring a list of medicines and relevant conditions, and mention previous problems with local anaesthetic or healing. Ask how long the first dressing should remain in place and what supplies you will need.",
+          "Before leaving, make sure you know the follow-up arrangements and warning signs. A clear recovery plan is as important as understanding the procedure itself. Keep the written instructions somewhere accessible."
+        ],
+        "references": [
+          2,
+          3
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can I cut out the painful corner myself?",
+        "answer": "Avoid digging or cutting into the affected edge. Seek advice for persistent pain, swelling or infection."
+      },
+      {
+        "question": "Does surgery guarantee the nail will never return?",
+        "answer": "No. Discuss recurrence and other risks with the clinician; no unsupported success rate is provided here."
+      },
+      {
+        "question": "How quickly can I return to work?",
+        "answer": "It depends on the procedure, footwear and job demands. Agree a personalised plan with the treating clinician."
+      }
+    ],
+    "references": [
+      {
+        "organisation": "NHS",
+        "title": "Ingrown toenail",
+        "url": "https://www.nhs.uk/conditions/ingrown-toenail/",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Royal Orthopaedic Hospital",
+        "title": "Nail Surgery",
+        "url": "https://roh.nhs.uk/services-information/foot-and-ankle/nail-surgery",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Guy's and St Thomas' NHS Foundation Trust",
+        "title": "Redressing your foot after nail surgery",
+        "url": "https://www.guysandstthomas.nhs.uk/health-information/redressing-your-foot-after-nail-surgery",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "East London NHS Foundation Trust",
+        "title": "A Guide to Nail Surgery",
+        "url": "https://www.elft.nhs.uk/sites/default/files/2025-09/Nail-Surgery-Guide%20.pdf",
+        "accessedAt": "2026-11-01"
+      }
+    ],
+    "seoDescription": "Explore nail care, footwear, signs of infection and treatment choices for a toenail that repeatedly becomes painful.",
+    "publicPreview": true,
+    "readingTimeMinutes": 5
+  },
+  {
+    "slug": "choosing-comfortable-supportive-footwear",
+    "title": "How to Choose Comfortable and Supportive Footwear",
+    "excerpt": "A practical guide to shoe fit, socks, insoles and everyday comfort, with questions to take to a footwear assessment.",
+    "category": "Footwear & Lifestyle",
+    "tags": [
+      "footwear",
+      "orthoses",
+      "prevention"
+    ],
+    "status": "awaiting-review",
+    "updatedAt": "2026-11-01",
+    "image": {
+      "src": "/journal/supportive-footwear.jpg",
+      "alt": "Lace-up walking trainers and socks laid out on a wooden surface",
+      "source": "Supplied project asset; original photographer and licence not documented in repository.",
+      "rights": "Clinic must confirm usage rights before publication.",
+      "approved": false
+    },
+    "sections": [
+      {
+        "id": "starting-point",
+        "heading": "What does supportive footwear mean?",
+        "paragraphs": [
+          "A useful shoe is one that fits your foot, suits your activity and feels comfortable in use. A marketing label such as supportive cannot tell you whether a shoe will work for you. Consider fastening, space, the surface you walk on and any prescribed device.",
+          "Start with the situations that matter most: a standing shift, a daily walk, an outdoor route or time spent indoors. The practical requirements may differ. There is no single style that solves every foot problem."
+        ],
+        "references": [
+          1
+        ]
+      },
+      {
+        "id": "fit",
+        "heading": "How should I check the fit?",
+        "paragraphs": [
+          "Try both shoes with the socks you expect to wear. Walk around indoors, checking for pressure at the toes, slipping at the heel and areas that rub. Width and depth matter alongside the size number.",
+          "The Royal College of Podiatry suggests trying shoes later in the day, when feet may be larger, and comparing several pairs. If purchasing online, check fit indoors before wearing the shoes outside so that you can follow the retailer's return conditions."
+        ],
+        "references": [
+          1
+        ]
+      },
+      {
+        "id": "activity",
+        "heading": "Does the type of walking matter?",
+        "paragraphs": [
+          "Match footwear to the surface and conditions. A trainer suitable for an urban walk may not be your choice for wet, uneven terrain. Secure fastening helps keep the shoe in place; comfort should be assessed during the activity rather than judged from appearance.",
+          "If a change in footwear coincides with new symptoms, note the change and seek advice if symptoms persist. Do not assume that a shoe will correct a clinical problem simply because its advertising refers to posture or alignment."
+        ],
+        "references": [
+          1
+        ]
+      },
+      {
+        "id": "socks",
+        "heading": "How can socks and gradual use help?",
+        "paragraphs": [
+          "Friction and moisture can contribute to blisters. Comfortable footwear, suitable socks and changing damp socks can help. Introduce new shoes over shorter periods instead of beginning with a long outing.",
+          "If a blister develops, avoid the shoe that caused it until it heals. Do not deliberately burst it or remove its protective skin. A pharmacist can advise about dressings. Signs of infection, severe pain or recurrent unexplained blisters need medical advice."
+        ],
+        "references": [
+          2
+        ]
+      },
+      {
+        "id": "insoles",
+        "heading": "What if I wear orthoses?",
+        "paragraphs": [
+          "Take your inserts when trying shoes. They occupy space and may change the fit at the toes and heel. Some shoes have removable liners, but do not remove or alter parts of prescribed footwear without advice.",
+          "A device that fits one pair may not fit another. Check for sliding, pressure or rubbing. Ask your prescriber about suitable footwear before buying several pairs, and bring the intended shoes to fitting or review."
+        ],
+        "references": [
+          3,
+          4
+        ]
+      },
+      {
+        "id": "higher-risk",
+        "heading": "When is an individual footwear assessment important?",
+        "paragraphs": [
+          "Reduced sensation, poor blood flow or a history of foot wounds can make ordinary fit problems more consequential. Prescribed footwear may be used when standard shoes do not meet someone's needs.",
+          "Follow the supplied wearing-in instructions and inspect footwear and skin as advised. Report damage, sores or persistent pressure marks. Absence of pain should not be treated as proof of a good fit when sensation is reduced."
+        ],
+        "references": [
+          4
+        ]
+      },
+      {
+        "id": "everyday-checks",
+        "heading": "What should I look for over time?",
+        "paragraphs": [
+          "Check whether the shoe still fits securely and whether its lining or insole is damaged. For prescribed footwear, ask the service about repairs or review rather than making your own modifications.",
+          "Comfort can change as shoes wear or your needs change. Keep a note of where problems arise and how long the shoes have been worn. Bring them to assessment: an actual pair often communicates a problem more clearly than a brand name."
+        ],
+        "references": [
+          4
+        ]
+      },
+      {
+        "id": "buying-questions",
+        "heading": "What questions make a purchase more useful?",
+        "paragraphs": [
+          "Ask about returns, fit options and whether the shoe can accommodate your prescribed insert. Consider how you will use it during a typical week. Price, fashion and comfort are personal considerations, but none should replace a fit check.",
+          "If pain continues across several pairs, seek assessment rather than repeatedly buying shoes to treat an unidentified problem. Footwear is one part of care; it cannot diagnose the cause of persistent symptoms."
+        ],
+        "references": [
+          1,
+          3
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Should new shoes hurt while I break them in?",
+        "answer": "Do not force continued wear through rubbing or pain. Reassess fit and seek advice if symptoms persist."
+      },
+      {
+        "question": "Are expensive trainers always better?",
+        "answer": "Price alone does not establish fit or suitability. Assess the shoe against your activity and clinical needs."
+      },
+      {
+        "question": "Can I remove the liner to fit an orthotic?",
+        "answer": "Some ordinary shoes allow this, but check with your prescriber before altering prescribed footwear or devices."
+      }
+    ],
+    "references": [
+      {
+        "organisation": "Royal College of Podiatry",
+        "title": "Your walking kit",
+        "url": "https://rcpod.org.uk/patient-information/walking/footwear",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "NHS",
+        "title": "Blisters",
+        "url": "https://www.nhs.uk/conditions/blisters/",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Royal National Orthopaedic Hospital",
+        "title": "A Patient's Guide to Foot Orthosis",
+        "url": "https://www.rnoh.nhs.uk/patients-and-visitors/patient-information-guides/foot-orthosis-patients-guide",
+        "accessedAt": "2026-11-01"
+      },
+      {
+        "organisation": "Guy's and St Thomas' NHS Foundation Trust",
+        "title": "Orthopaedic footwear",
+        "url": "https://www.guysandstthomas.nhs.uk/health-information/orthopaedic-footwear",
+        "accessedAt": "2026-11-01"
+      }
+    ],
+    "seoDescription": "A practical guide to shoe fit, socks, insoles and everyday comfort, with questions to take to a footwear assessment.",
+    "publicPreview": true
+  }
+]
