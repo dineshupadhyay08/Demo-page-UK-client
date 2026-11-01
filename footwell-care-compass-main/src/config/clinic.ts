@@ -129,5 +129,5 @@ export const PRIMARY_NAVIGATION = [
   ["Biomechanics & Orthotics", "#technology"],
   ["About the Clinic", "#about"],
   ["Patient Stories", "#stories"],
-  ["Advice & Journal", "#journal"],
+  ["Clinical Insights", "/#journal"],
 ] as const;

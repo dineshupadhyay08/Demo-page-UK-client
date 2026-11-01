@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useSyncExternalStore } from "react";
 
 const THEME_STORAGE_KEY = "footwell-theme";
 
@@ -46,39 +46,46 @@ function applyTheme(theme: ResolvedTheme) {
   root.style.colorScheme = theme;
 }
 
+let sessionPreference: ThemePreference | undefined;
+const preferenceListeners = new Set<() => void>();
+const getPreferenceSnapshot = () => sessionPreference ?? getStoredTheme();
+const getServerPreference = (): ThemePreference => "system";
+const getServerSystemIsDark = () => false;
+
+function subscribePreference(listener: () => void) {
+  preferenceListeners.add(listener);
+  const syncStoredTheme = (event: StorageEvent) => {
+    if (event.key === THEME_STORAGE_KEY || event.key === null) {
+      sessionPreference = getStoredTheme();
+      preferenceListeners.forEach(notify => notify());
+    }
+  };
+  window.addEventListener("storage", syncStoredTheme);
+  return () => {
+    preferenceListeners.delete(listener);
+    window.removeEventListener("storage", syncStoredTheme);
+  };
+}
+
+function subscribeSystemTheme(listener: () => void) {
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  mediaQuery.addEventListener("change", listener);
+  return () => mediaQuery.removeEventListener("change", listener);
+}
+
 export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-  // Match the server markup during hydration. The layout effect synchronously
-  // restores the browser preference before paint, while the layout initializer
-  // prevents a visible colour flash before React is ready.
-  const [theme, setThemeState] = useState<ThemePreference>("system");
-  const [systemIsDark, setSystemIsDark] = useState(false);
+  // Server snapshots keep hydration consistent; subscriptions track browser state.
+  const theme = useSyncExternalStore(subscribePreference, getPreferenceSnapshot, getServerPreference);
+  const systemIsDark = useSyncExternalStore(subscribeSystemTheme, getSystemIsDark, getServerSystemIsDark);
   const resolvedTheme = resolveTheme(theme, systemIsDark);
-
-  useLayoutEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const syncSystemTheme = () => setSystemIsDark(mediaQuery.matches);
-    const syncStoredTheme = (event: StorageEvent) => {
-      if (event.key === THEME_STORAGE_KEY) setThemeState(getStoredTheme());
-    };
-
-    setThemeState(getStoredTheme());
-    syncSystemTheme();
-    mediaQuery.addEventListener("change", syncSystemTheme);
-    window.addEventListener("storage", syncStoredTheme);
-
-    return () => {
-      mediaQuery.removeEventListener("change", syncSystemTheme);
-      window.removeEventListener("storage", syncStoredTheme);
-    };
-  }, []);
 
   useLayoutEffect(() => {
     applyTheme(resolvedTheme);
   }, [resolvedTheme]);
 
   const setTheme = useCallback((nextTheme: ThemePreference) => {
-    // React state applies the preference immediately even when persistence is unavailable.
-    setThemeState(nextTheme);
+    // Retain the selected preference even when browser storage is unavailable.
+    sessionPreference = nextTheme;
     applyTheme(resolveTheme(nextTheme, getSystemIsDark()));
 
     try {
@@ -86,6 +93,7 @@ export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode
     } catch {
       // Storage can be disabled; retain the selected theme for this session.
     }
+    preferenceListeners.forEach(notify => notify());
   }, []);
 
   const value = useMemo<ThemeContextValue>(
