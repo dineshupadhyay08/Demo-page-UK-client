@@ -41,12 +41,14 @@ model Practitioner {
 
 model Appointment {
   id               String                @id @default(uuid())
+  bookingReference String                @unique
   treatmentName    String
   startsAt         DateTime
   durationMinutes  Int
   consultationMode ConsultationMode
   status           AppointmentStatus     @default(PENDING)
   patientNote      String?
+  privacyAcceptedAt DateTime?
   patientId        String
   practitionerId   String
   patient          PatientProfile        @relation(fields: [patientId], references: [id], onDelete: Restrict)
