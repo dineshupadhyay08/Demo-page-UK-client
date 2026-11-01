@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   ShieldCheck, Phone, MapPin, Star, ArrowRight, Menu, X, Clock, ScanLine, Printer,
   Microscope, CheckCircle2, ChevronDown, Award, Mail,
@@ -17,7 +17,7 @@ import { SectionEyebrow } from "@/components/shared/SectionEyebrow";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { CLINIC, PRIMARY_NAVIGATION, TREATMENT_CATEGORIES, TREATMENTS, type TreatmentCategory } from "@/config/clinic";
 
-export function HomePage() {
+export function HomePage({ journalCards }: { journalCards: ReactNode }) {
   const [menu, setMenu] = useState(false);
   const [booking, setBooking] = useState<string | null>(null);
   const [cat, setCat] = useState<TreatmentCategory>("Routine Foot Care");
@@ -195,23 +195,10 @@ export function HomePage() {
         </section>
 
         {/* Journal */}
-        <section id="journal" className="mx-auto max-w-7xl px-5 py-20">
+        <section id="journal" className="mx-auto max-w-7xl scroll-mt-24 px-5 py-20">
           <SectionEyebrow>Advice & journal</SectionEyebrow>
           <h2 className="text-3xl text-heading sm:text-4xl">Clinical insights</h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {[
-              { t: "Recognising the Early Signs of Plantar Fasciitis", e: "Sharp heel pain with your first steps in the morning is the classic warning sign. Here's what to try first, and when to seek help.", r: 6 },
-              { t: "Custom Orthotics vs Off-the-Shelf Insoles", e: "Prefabricated insoles help many people. We explain when a prescribed device is genuinely worth the investment.", r: 8 },
-              { t: "How to Prevent Recurrent Ingrown Nails", e: "Cutting technique, footwear and when partial nail surgery offers a 95%+ long-term success rate.", r: 5 },
-            ].map((a, i) => (
-              <article key={a.t} className="group rounded-2xl border bg-card p-7 transition-shadow hover:shadow-xl hover:shadow-primary/5">
-                <div className={`mb-6 h-36 rounded-xl ${["bg-secondary", "bg-accent-soft", "bg-gold/15"][i]}`} aria-hidden />
-                <p className="text-xs text-muted-foreground">{a.r} min read · Reviewed by {CLINIC.practitioner}</p>
-                <h3 className="mt-3 text-xl leading-snug text-heading group-hover:text-accent transition-colors">{a.t}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{a.e}</p>
-              </article>
-            ))}
-          </div>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">{journalCards}</div>
         </section>
 
         {/* FAQ + Symptom */}
@@ -276,213 +263,3 @@ export function HomePage() {
     </div>
   );
 }
-
-/* Legacy implementations moved into focused home and booking components.
-function PlatformPreviews({ onBook }: { onBook: () => void }) {
-  const [mic, setMic] = useState(true);
-  const [cam, setCam] = useState(true);
-  return (
-    <section className="mx-auto max-w-7xl px-5 py-20">
-      <div className="max-w-2xl">
-        <Eyebrow>Coming to your patient platform</Eyebrow>
-        <h2 className="text-3xl text-primary sm:text-4xl">Book, consult and learn, all in one place</h2>
-        <p className="mt-4 text-muted-foreground">Interactive previews of planned features. These are design prototypes, not yet connected to live systems.</p>
-      </div>
-      <div className="mt-10 grid gap-6 lg:grid-cols-3">
-        <div className="flex flex-col rounded-2xl border bg-card p-7">
-          <Calendar className="h-7 w-7 text-accent" aria-hidden />
-          <h3 className="mt-5 text-xl text-primary">Online booking</h3>
-          <p className="mt-2 flex-1 text-sm text-muted-foreground">Choose a treatment, see live availability and set your preferences in under a minute.</p>
-          <Btn variant="accent" className="mt-6" onClick={onBook}>Try the booking flow</Btn>
-        </div>
-        <div className="overflow-hidden rounded-2xl border bg-primary text-primary-foreground">
-          <div className="relative grid aspect-video place-items-center bg-primary-foreground/5">
-            <span className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-primary/80 px-2.5 py-1 text-[11px]"><Lock className="h-3 w-3" aria-hidden />End-to-end encrypted</span>
-            <span className="absolute right-3 top-3 rounded-full bg-destructive/80 px-2.5 py-1 text-[11px]">● 12:48</span>
-            {cam ? <div className="grid h-20 w-20 place-items-center rounded-full bg-accent font-serif text-2xl">EH</div> : <VideoOff className="h-8 w-8 opacity-60" />}
-            <div className="absolute bottom-3 right-3 h-14 w-20 rounded-lg border border-primary-foreground/20 bg-primary-foreground/10 text-center text-[10px] leading-[3.5rem]">You</div>
-          </div>
-          <div className="flex justify-center gap-3 p-4">
-            <button onClick={() => setMic(!mic)} aria-label={mic ? "Mute microphone" : "Unmute microphone"} className="grid h-11 w-11 place-items-center rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20">{mic ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}</button>
-            <button onClick={() => setCam(!cam)} aria-label={cam ? "Turn camera off" : "Turn camera on"} className="grid h-11 w-11 place-items-center rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20">{cam ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}</button>
-            <button aria-label="End call (preview)" className="grid h-11 w-11 place-items-center rounded-full bg-destructive"><PhoneOff className="h-5 w-5" /></button>
-          </div>
-          <div className="px-7 pb-7">
-            <h3 className="text-xl">Video consultations</h3>
-            <p className="mt-2 text-sm text-primary-foreground/70">Secure, appointment-specific links for remote triage and follow-up reviews.</p>
-          </div>
-        </div>
-        <div className="flex flex-col rounded-2xl border bg-card p-7">
-          <GraduationCap className="h-7 w-7 text-accent" aria-hidden />
-          <h3 className="mt-5 text-xl text-primary">Foot Health Academy</h3>
-          <ul className="mt-5 space-y-3">
-            {[["Runner's Plantar Fasciitis Recovery Protocol", "8 lessons", "£49", 62], ["Diabetic Daily Foot Care Guide", "5 lessons", "£29", 20]].map(([t, l, p, pr]) => (
-              <li key={t as string} className="rounded-xl bg-secondary p-4">
-                <div className="flex items-start justify-between gap-2"><p className="text-sm font-semibold">{t}</p><span className="text-sm font-semibold text-accent">{p}</span></div>
-                <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><PlayCircle className="h-3.5 w-3.5" aria-hidden />{l}</p>
-                <div className="mt-3 h-1.5 rounded-full bg-border" role="progressbar" aria-valuenow={pr as number} aria-valuemin={0} aria-valuemax={100} aria-label="Course progress"><div className="h-full rounded-full bg-accent" style={{ width: `${pr}%` }} /></div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </section>
-  );
-}
-*/
-
-/* Legacy implementations moved into focused home and booking components.
-function SymptomFinder({ onBook }: { onBook: (t: string) => void }) {
-  const Q = [
-    { q: "Where is the discomfort?", o: ["Heel or arch", "Toenail", "Knee, shin or hip", "Skin or general"] },
-    { q: "Do you have diabetes or circulation concerns?", o: ["Yes", "No"] },
-  ];
-  const [a, setA] = useState<string[]>([]);
-  const result = a.length < 2 ? null
-    : a[1] === "Yes" ? "Diabetic Foot Assessment"
-    : ({ "Heel or arch": "Biomechanical & Gait Assessment", Toenail: "Partial Nail Avulsion (PNA)", "Knee, shin or hip": "Biomechanical & Gait Assessment", "Skin or general": "General Podiatry Appointment" } as Record<string, string>)[a[0] ?? ""];
-  return (
-    <div className="self-start rounded-2xl border bg-card p-8 shadow-xl shadow-primary/5">
-      <Eyebrow>Symptom finder</Eyebrow>
-      <h2 className="text-2xl text-primary">Find the right appointment</h2>
-      <div className="mt-2 h-1 rounded-full bg-secondary"><div className="h-full rounded-full bg-accent transition-all" style={{ width: `${(a.length / 2) * 100}%` }} /></div>
-      {result ? (
-        <div className="mt-8 animate-in fade-in">
-          <p className="text-sm text-muted-foreground">We suggest:</p>
-          <p className="mt-1 font-serif text-2xl text-primary">{result}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Btn onClick={() => onBook(result)}>Book this</Btn>
-            <Btn variant="outline" onClick={() => setA([])}>Start again</Btn>
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">Guidance only, not a diagnosis.</p>
-        </div>
-      ) : (
-        <fieldset key={a.length} className="mt-8 animate-in fade-in">
-          <legend className="font-medium">{Q[a.length]?.q}</legend>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {Q[a.length]?.o.map((o) => <button key={o} onClick={() => setA([...a, o])} className="min-h-12 rounded-xl border px-4 text-left text-sm hover:border-accent hover:bg-secondary">{o}</button>)}
-          </div>
-        </fieldset>
-      )}
-    </div>
-  );
-}
-
-function BookingModal({ initial, onClose }: { initial: string; onClose: () => void }) {
-  const [step, setStep] = useState(initial ? 1 : 0);
-  const [t, setT] = useState(initial);
-  const [day, setDay] = useState<number | null>(null);
-  const [time, setTime] = useState<string | null>(null);
-  const [mode, setMode] = useState("In clinic");
-  const [documents, setDocuments] = useState<File[]>([]);
-  const [documentError, setDocumentError] = useState("");
-  const [isDraggingDocuments, setIsDraggingDocuments] = useState(false);
-  const documentInputRef = useRef<HTMLInputElement>(null);
-  const days = Array.from({ length: 10 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() + i + 1); return d; }).filter((d) => d.getDay() !== 0);
-  const steps = ["Treatment", "Date & time", "Preferences", "Confirm"];
-  const addDocuments = (files: FileList | File[]) => {
-    const validDocuments: File[] = [];
-    const errors: string[] = [];
-
-    Array.from(files).forEach((file) => {
-      const extension = file.name.split(".").pop()?.toLowerCase();
-      const acceptedFileTypes: Record<string, string[]> = {
-        pdf: ["application/pdf"],
-        jpg: ["image/jpeg", "image/jpg"],
-        jpeg: ["image/jpeg", "image/jpg"],
-        png: ["image/png"],
-      };
-
-      if (!extension || !acceptedFileTypes[extension] || (file.type && !acceptedFileTypes[extension].includes(file.type))) {
-        errors.push(`${file.name}: PDF, JPG, JPEG and PNG files are supported.`);
-      } else if (file.size > 10 * 1024 * 1024) {
-        errors.push(`${file.name}: files must be 10 MB or smaller.`);
-      } else {
-        validDocuments.push(file);
-      }
-    });
-
-    if (validDocuments.length) {
-      setDocuments((current) => [...current, ...validDocuments]);
-    }
-    setDocumentError(errors.join(" "));
-  };
-  const documentType = (file: File) => file.name.split(".").pop()?.toUpperCase() ?? "Document";
-  const documentSize = (size: number) => size < 1024 * 1024 ? `${Math.max(1, Math.round(size / 1024))} KB` : `${(size / (1024 * 1024)).toFixed(1)} MB`;
-  return (
-    <div className="fixed inset-0 z-50 grid place-items-center p-4" role="dialog" aria-modal="true" aria-label="Book an appointment">
-      <div className="absolute inset-0 bg-primary/50 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
-      <div className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-card p-7 shadow-2xl animate-in zoom-in-95">
-        <button onClick={onClose} aria-label="Close" className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full hover:bg-secondary"><X className="h-5 w-5" /></button>
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent">Booking preview</p>
-        <ol className="mt-4 flex gap-2">{steps.map((s, i) => <li key={s} className={`h-1 flex-1 rounded-full ${i <= step ? "bg-accent" : "bg-secondary"}`} aria-label={s} />)}</ol>
-        <h2 className="mt-5 text-2xl text-primary">{steps[step]}</h2>
-
-        {step === 0 && <div className="mt-5 grid gap-2">{TREATMENTS.map((x) => (
-          <button key={x.name} onClick={() => { setT(x.name); setStep(1); }} className="flex min-h-12 items-center justify-between rounded-xl border px-4 text-left text-sm hover:border-accent hover:bg-secondary">
-            <span>{x.name}</span><span className="text-muted-foreground">{x.mins} min · £{x.from}</span></button>))}</div>}
-
-        {step === 1 && <div className="mt-5">
-          <p className="text-sm text-muted-foreground">{t} with {CLINIC.practitioner}</p>
-          <div className="mt-4 flex gap-2 overflow-x-auto pb-2">{days.map((d, i) => (
-            <button key={i} onClick={() => setDay(i)} className={`min-w-16 rounded-xl border px-3 py-2 text-center text-sm ${day === i ? "border-primary bg-primary text-primary-foreground" : "hover:bg-secondary"}`}>
-              <span className="block text-xs opacity-70">{d.toLocaleDateString("en-GB", { weekday: "short" })}</span>{d.getDate()}</button>))}</div>
-          {day !== null && <div className="mt-4 grid grid-cols-4 gap-2">{["09:00", "10:30", "12:00", "14:15", "15:30", "17:00"].filter((_, i) => (i + day) % 3 !== 0).map((h) => (
-            <button key={h} onClick={() => setTime(h)} className={`min-h-11 rounded-lg border text-sm ${time === h ? "border-accent bg-accent text-accent-foreground" : "hover:bg-secondary"}`}>{h}</button>))}</div>}
-          <Btn className="mt-6 w-full" disabled={!time} onClick={() => setStep(2)}>Continue</Btn>
-        </div>}
-
-        {step === 2 && <div className="mt-5 space-y-3">
-          {["In clinic", "Video consultation"].map((m) => (
-            <label key={m} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 text-sm ${mode === m ? "border-accent bg-secondary" : ""}`}>
-              <input type="radio" name="mode" checked={mode === m} onChange={() => setMode(m)} className="accent-[var(--accent)]" />{m}</label>))}
-          <section className="rounded-xl border p-4" aria-labelledby="supporting-documents-heading">
-            <h3 id="supporting-documents-heading" className="text-sm font-semibold">Supporting Documents</h3>
-            <p id="supporting-documents-help" className="mt-1 text-sm text-muted-foreground">Upload any relevant medical documents to help your podiatrist prepare for your appointment. This is optional.</p>
-            <div
-              className={`mt-3 rounded-xl border border-dashed p-4 text-center transition-colors ${isDraggingDocuments ? "border-accent bg-secondary" : "border-border"}`}
-              onDragOver={(event) => { event.preventDefault(); setIsDraggingDocuments(true); }}
-              onDragLeave={() => setIsDraggingDocuments(false)}
-              onDrop={(event) => { event.preventDefault(); setIsDraggingDocuments(false); addDocuments(event.dataTransfer.files); }}
-              aria-describedby="supporting-documents-help"
-            >
-              <Upload className="mx-auto h-5 w-5 text-muted-foreground" aria-hidden="true" />
-              <p className="mt-2 text-sm font-medium">Drag and drop documents here</p>
-              <p className="mt-1 text-xs text-muted-foreground">PDF, JPG, JPEG or PNG · up to 10 MB per file</p>
-              <input
-                ref={documentInputRef}
-                type="file"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-                className="sr-only"
-                aria-describedby="supporting-documents-help"
-                onChange={(event) => { if (event.target.files) addDocuments(event.target.files); event.currentTarget.value = ""; }}
-              />
-              <Btn type="button" variant="outline" className="mt-3" onClick={() => documentInputRef.current?.click()}>Choose Files</Btn>
-            </div>
-            {documentError && <p className="mt-3 text-sm text-destructive" role="alert">{documentError}</p>}
-            {documents.length > 0 && <ul className="mt-3 space-y-2" aria-label="Selected documents">
-              {documents.map((file, index) => <li key={`${file.name}-${file.lastModified}-${index}`} className="flex items-center gap-3 rounded-lg bg-secondary p-3 text-sm">
-                <FileText className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-                <span className="min-w-0 flex-1 break-all"><span className="block font-medium">{file.name}</span><span className="text-xs text-muted-foreground">{documentType(file)} · {documentSize(file.size)}</span></span>
-                <button type="button" onClick={() => setDocuments((current) => current.filter((_, itemIndex) => itemIndex !== index))} className="min-h-11 rounded-full px-3 text-sm font-medium text-primary hover:bg-background" aria-label={`Remove ${file.name}`}>Remove</button>
-              </li>)}
-            </ul>}
-          </section>
-          <label className="block text-sm font-medium">Anything we should know?<textarea className="mt-2 w-full rounded-xl border bg-background p-3 text-sm" rows={3} placeholder="e.g. heel pain for three months" /></label>
-          <Btn className="w-full" onClick={() => setStep(3)}>Review booking</Btn>
-        </div>}
-
-        {step === 3 && <div className="mt-5 text-center">
-          <CheckCircle2 className="mx-auto h-14 w-14 text-accent" aria-hidden />
-          <p className="mt-4 font-serif text-xl text-primary">{t}</p>
-          <p className="mt-1 text-sm text-muted-foreground">{day !== null && days[day]?.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })} at {time} · {mode}</p>
-          {documents.length > 0 && <p className="mt-2 text-sm text-muted-foreground">{documents.length} supporting document{documents.length === 1 ? "" : "s"} selected for this booking preview.</p>}
-          <p className="mt-6 rounded-xl bg-secondary p-4 text-xs text-muted-foreground">This is a design preview. In the live platform, you would receive a confirmation email and optional secure payment link.</p>
-          <Btn className="mt-6" onClick={onClose}>Done</Btn>
-        </div>}
-      </div>
-    </div>
-  );
-}
-*/
