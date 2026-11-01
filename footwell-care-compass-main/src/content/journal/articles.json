@@ -41,7 +41,8 @@
         "references": [
           1,
           2
-        ]
+        ],
+        "presentation": "bullets"
       },
       {
         "id": "other-causes",
@@ -52,7 +53,8 @@
         ],
         "references": [
           3
-        ]
+        ],
+        "presentation": "warning"
       },
       {
         "id": "load",
@@ -64,7 +66,8 @@
         "references": [
           1,
           2
-        ]
+        ],
+        "presentation": "bullets"
       },
       {
         "id": "self-care",
@@ -76,7 +79,8 @@
         "references": [
           1,
           2
-        ]
+        ],
+        "presentation": "steps"
       },
       {
         "id": "exercise",
@@ -89,7 +93,8 @@
           2,
           3,
           4
-        ]
+        ],
+        "presentation": "steps"
       },
       {
         "id": "assessment",
@@ -125,7 +130,8 @@
         "references": [
           1,
           3
-        ]
+        ],
+        "presentation": "warning"
       }
     ],
     "faqs": [
@@ -170,7 +176,14 @@
     ],
     "seoDescription": "Morning heel pain can suggest plantar fasciitis, but other conditions can look similar. Understand the pattern, sensible first steps and when to get assessed.",
     "publicPreview": true,
-    "readingTimeMinutes": 6
+    "readingTimeMinutes": 6,
+    "overview": [
+      "The plantar fascia is a strong band beneath the foot, linking the heel with the forefoot and helping support the arch.",
+      "Pain beneath the heel that is particularly noticeable after sleeping or sitting is a familiar presentation.",
+      "A sudden increase in walking, running or standing can increase demand on the heel.",
+      "Reduce activities that clearly aggravate symptoms while finding comfortable ways to stay active.",
+      "Arrange assessment if pain is severe, keeps returning, limits normal activities or has not improved after two weeks of self-care."
+    ]
   },
   {
     "slug": "custom-orthotics-vs-off-the-shelf-insoles",
@@ -237,6 +250,28 @@
         ],
         "references": [
           1
+        ],
+        "comparison": [
+          {
+            "label": "Design",
+            "prefabricated": "Standard sizes and shapes; some can be selected or adapted by a clinician.",
+            "custom": "Made to an individual prescription, often using an impression or scan."
+          },
+          {
+            "label": "Assessment",
+            "prefabricated": "Fit, symptoms and intended use still matter.",
+            "custom": "The prescription should explain the clinical goal and why this design is suitable."
+          },
+          {
+            "label": "Benefit",
+            "prefabricated": "May be a reasonable option for some symptoms.",
+            "custom": "Not automatically superior; suitability depends on the condition and clinical need."
+          },
+          {
+            "label": "Practical considerations",
+            "prefabricated": "Check space, comfort and secure fit in the actual shoe.",
+            "custom": "Ask about fitting, adjustments, follow-up and replacement costs."
+          }
         ]
       },
       {
@@ -249,7 +284,8 @@
         "references": [
           2,
           4
-        ]
+        ],
+        "presentation": "bullets"
       },
       {
         "id": "adaptation",
@@ -261,7 +297,8 @@
         "references": [
           3,
           4
-        ]
+        ],
+        "presentation": "steps"
       },
       {
         "id": "footwear",
@@ -296,7 +333,8 @@
         "references": [
           1,
           2
-        ]
+        ],
+        "presentation": "steps"
       }
     ],
     "faqs": [
@@ -347,7 +385,14 @@
     ],
     "seoDescription": "Understand what shoe inserts can offer, how custom and prefabricated devices differ, and why assessment matters more than a universal best option.",
     "publicPreview": true,
-    "readingTimeMinutes": 8
+    "readingTimeMinutes": 8,
+    "overview": [
+      "Foot orthoses are inserts worn inside footwear to support the foot, redistribute load or address a specific functional need.",
+      "A prefabricated device is made in standard sizes or shapes and selected to suit the wearer.",
+      "Custom devices are produced for an individual's prescription, often using an impression or scan alongside clinical assessment.",
+      "Custom orthoses are not automatically better: benefits depend on the condition, clinical assessment and the outcome being measured.",
+      "Follow the individual wearing-in instructions supplied with your device."
+    ]
   },
   {
     "slug": "preventing-recurrent-ingrown-nails",
@@ -390,7 +435,8 @@
         "references": [
           1,
           2
-        ]
+        ],
+        "presentation": "bullets"
       },
       {
         "id": "routine-care",
@@ -401,7 +447,8 @@
         ],
         "references": [
           1
-        ]
+        ],
+        "presentation": "steps"
       },
       {
         "id": "shoes",
@@ -412,7 +459,8 @@
         ],
         "references": [
           1
-        ]
+        ],
+        "presentation": "bullets"
       },
       {
         "id": "infection",
@@ -424,7 +472,8 @@
         "references": [
           1,
           3
-        ]
+        ],
+        "presentation": "warning"
       },
       {
         "id": "conservative",
@@ -460,7 +509,8 @@
         "references": [
           3,
           4
-        ]
+        ],
+        "presentation": "steps"
       },
       {
         "id": "preparation",
@@ -517,7 +567,14 @@
     ],
     "seoDescription": "Explore nail care, footwear, signs of infection and treatment choices for a toenail that repeatedly becomes painful.",
     "publicPreview": true,
-    "readingTimeMinutes": 5
+    "readingTimeMinutes": 5,
+    "overview": [
+      "An ingrown nail presses or grows into the surrounding skin.",
+      "Nail-cutting technique and pressure from poorly fitting footwear can contribute.",
+      "For prevention, cut toenails across rather than digging down the edges, and avoid cutting them too short.",
+      "Arrange medical advice for a painful, swollen toe with pus, symptoms that are not improving, or an ingrown nail in someone with diabetes.",
+      "Surgery is not required for every ingrown nail; examination, severity and recurrence guide the treatment discussion."
+    ]
   },
   {
     "slug": "choosing-comfortable-supportive-footwear",
@@ -559,7 +616,8 @@
         ],
         "references": [
           1
-        ]
+        ],
+        "presentation": "steps"
       },
       {
         "id": "activity",
@@ -570,7 +628,8 @@
         ],
         "references": [
           1
-        ]
+        ],
+        "presentation": "bullets"
       },
       {
         "id": "socks",
@@ -604,7 +663,8 @@
         ],
         "references": [
           4
-        ]
+        ],
+        "presentation": "warning"
       },
       {
         "id": "everyday-checks",
@@ -615,7 +675,8 @@
         ],
         "references": [
           4
-        ]
+        ],
+        "presentation": "steps"
       },
       {
         "id": "buying-questions",
@@ -671,6 +732,13 @@
       }
     ],
     "seoDescription": "A practical guide to shoe fit, socks, insoles and everyday comfort, with questions to take to a footwear assessment.",
-    "publicPreview": true
+    "publicPreview": true,
+    "overview": [
+      "A useful shoe is one that fits your foot, suits your activity and feels comfortable in use.",
+      "Try both shoes with the socks you expect to wear.",
+      "Friction and moisture can contribute to blisters.",
+      "Take your inserts when trying shoes.",
+      "Reduced sensation, poor blood flow or a history of foot wounds can make ordinary fit problems more consequential."
+    ]
   }
 ]

@@ -5,15 +5,16 @@ export type JournalArticle = {
   status: EditorialStatus; updatedAt: string; publishedAt?: string;
   publicPreview?: boolean;
   readingTimeMinutes?: number;
+  overview?: string[];
   review?: { name: string; reviewedAt: string; approvedAt: string; revision: string };
   image: { src: string; alt: string; source: string; rights: string; approved: boolean };
-  sections: { id: string; heading: string; paragraphs: string[]; references: number[] }[];
+  sections: { id: string; heading: string; paragraphs: string[]; references: number[]; presentation?: "bullets" | "steps" | "warning"; comparison?: { label: string; prefabricated: string; custom: string }[] }[];
   faqs: { question: string; answer: string }[];
   references: { organisation: string; title: string; url: string; accessedAt: string }[];
   seoDescription: string;
 };
 export function contentRevision(article: JournalArticle): string {
-  return createHash("sha256").update(JSON.stringify({ title: article.title, excerpt: article.excerpt, category: article.category, tags: article.tags, sections: article.sections, faqs: article.faqs, references: article.references, image: article.image, seoDescription: article.seoDescription })).digest("hex");
+  return createHash("sha256").update(JSON.stringify({ title: article.title, excerpt: article.excerpt, category: article.category, tags: article.tags, overview: article.overview, sections: article.sections, faqs: article.faqs, references: article.references, image: article.image, seoDescription: article.seoDescription })).digest("hex");
 }
 export function isPublished(article: JournalArticle, now = new Date()): boolean {
   const review = article.review;
