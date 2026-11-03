@@ -8,6 +8,7 @@ import { publishedArticles, publishedArticle, visibleArticles, visibleArticle } 
 import sitemap from "@/app/sitemap";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
+import { EducationalSection } from "@/components/journal/EducationalSection";
 import { ArticleCard } from "@/components/journal/ArticleCard";
 import ArticlePage, { generateMetadata } from "@/app/advice-journal/[slug]/page";
 import JournalPage from "@/app/advice-journal/page";
@@ -80,15 +81,15 @@ describe("editorial library", () => {
     for (const a of drafts) {
       const html = renderToStaticMarkup(await ArticlePage({ params: Promise.resolve({ slug: a.slug }) }));
       expect(html).toContain("Awaiting clinical review.");
-      expect(html).toContain(a.sections[0]!.heading);
+      expect(html).toContain('role="tabpanel"');
       expect(html).toContain("Continue Exploring");
       expect(html).toContain("At a glance");
-      expect(html).toContain('aria-label="Article contents"');
-      expect(html).toContain('aria-current="location"');
-      expect(html).toContain('<summary class="cursor-pointer font-medium text-heading">On this page</summary>');
-      for (const section of a.sections) expect(html).toContain(`href="#${section.id}"`);
+      expect(html).toContain('aria-label="Article topics"');
+      expect(html).toContain('aria-selected="true"');
+      expect(html).toContain("On this page: ");
+      expect(html).not.toContain('href="#overview"');
       expect(a.overview).toHaveLength(5);
-      if (a.slug === "custom-orthotics-vs-off-the-shelf-insoles") expect(html).toContain('aria-label="Orthoses comparison"');
+      expect((html.match(/role="tabpanel"/g) ?? []).length).toBe(1);
       expect(html).not.toContain("Reviewed by Dr Eleanor Hart");
       for (const other of drafts.filter(d => d.slug !== a.slug)) expect(html).toContain(`href="/advice-journal/${other.slug}"`);
       expect((html.match(/after:absolute/g) ?? []).length).toBe(3);
@@ -152,5 +153,28 @@ describe("editorial library", () => {
       vi.stubEnv("SITE_URL", invalid); expect(journalOrigin()).toBeUndefined(); expect(sitemap()).toEqual([]);
     }
     vi.stubEnv("SITE_URL", "https://example.test/"); expect(journalOrigin()).toBe("https://example.test");
+  });
+});
+
+
+describe("educational article layouts", () => {
+  for (const article of drafts.slice(0, 3)) it(`preserves all content and prepares five distinct image positions for ${article.slug}`, () => {
+    const sections = article.sections.map(section => renderToStaticMarkup(createElement(EducationalSection, { article, section })));
+    for (const [index, section] of article.sections.entries()) {
+      for (const paragraph of section.paragraphs) {
+        const escaped = renderToStaticMarkup(createElement("p", null, paragraph)).slice(3, -4);
+        expect(sections[index]).toContain(escaped);
+      }
+      for (const number of section.references) expect(sections[index]).toContain(`href="${article.references[number - 1]!.url}"`);
+    }
+    const html = sections.join("");
+    const slots = [...html.matchAll(/data-image-slot="([^"]+)"/g)].map(match => match[1]);
+    expect(slots).toHaveLength(5);
+    expect(new Set(slots).size).toBe(5);
+    expect((html.match(/data-image-alt=/g) ?? [])).toHaveLength(5);
+    expect(html).not.toContain("<img");
+    expect(html).toContain("aspect-[16/9]");
+    expect(html).toContain("aspect-[4/3]");
+    if (article.slug.includes("plantar") || article.slug.includes("orthotics")) expect(html).toContain("<table");
   });
 });
