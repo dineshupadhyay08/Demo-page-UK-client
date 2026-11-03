@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError, PrismaClientInitializationError } from "@prisma/client/runtime/library";
 
 const mocks = vi.hoisted(() => ({
   practitioner: vi.fn(), conflicts: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn(), transaction: vi.fn(),
@@ -65,7 +65,7 @@ describe("availability timing diagnostics", () => {
   });
 
   it("retains bounded abuse protection when database attempts fail", async () => {
-    mocks.transaction.mockRejectedValue(new Prisma.PrismaClientKnownRequestError("transaction failed", {
+    mocks.transaction.mockRejectedValue(new PrismaClientKnownRequestError("transaction failed", {
       code: "P2028", clientVersion: "6", meta: { error: "Unable to start a transaction in the given time." },
     }));
     const submit = () => POST(new Request("http://localhost/api/appointments", {
@@ -146,7 +146,7 @@ describe("availability timing diagnostics", () => {
 
   it("retries a transient first connection failure once inside the same deadline", async () => {
     mocks.practitioner.mockImplementationOnce(() => new Promise((_, reject) => setTimeout(() => reject(
-      new Prisma.PrismaClientInitializationError("private host", "6", "P1001")), 1000)));
+      new PrismaClientInitializationError("private host", "6", "P1001")), 1000)));
     const pending = GET(request());
     await vi.advanceTimersByTimeAsync(1200);
     expect((await pending).status).toBe(200);
@@ -155,7 +155,7 @@ describe("availability timing diagnostics", () => {
   });
 
   it("stops after one failed retry and never exposes a false empty result", async () => {
-    mocks.practitioner.mockRejectedValue(new Prisma.PrismaClientInitializationError("private host", "6", "P1001"));
+    mocks.practitioner.mockRejectedValue(new PrismaClientInitializationError("private host", "6", "P1001"));
     const pending = GET(request());
     await vi.advanceTimersByTimeAsync(200);
     const response = await pending;
@@ -166,7 +166,7 @@ describe("availability timing diagnostics", () => {
   });
 
   it("retries the observed initialization connection error without an errorCode", async () => {
-    mocks.practitioner.mockRejectedValueOnce(new Prisma.PrismaClientInitializationError("Can't reach database server at `private-host:5432`", "6"));
+    mocks.practitioner.mockRejectedValueOnce(new PrismaClientInitializationError("Can't reach database server at `private-host:5432`", "6"));
     const pending = GET(request());
     await vi.advanceTimersByTimeAsync(200);
     expect((await pending).status).toBe(200);
@@ -175,7 +175,7 @@ describe("availability timing diagnostics", () => {
   });
 
   it("does not retry authentication failure or a missing practitioner", async () => {
-    mocks.practitioner.mockRejectedValueOnce(new Prisma.PrismaClientInitializationError("private", "6", "P1000"));
+    mocks.practitioner.mockRejectedValueOnce(new PrismaClientInitializationError("private", "6", "P1000"));
     expect((await GET(request())).status).toBe(503);
     expect(mocks.practitioner).toHaveBeenCalledTimes(1);
     mocks.practitioner.mockResolvedValueOnce(null);

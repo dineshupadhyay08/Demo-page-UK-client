@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError, PrismaClientInitializationError } from "@prisma/client/runtime/library";
 
 export type DatabaseErrorCategory =
   | "database-authentication"
@@ -26,14 +26,15 @@ function errorText(error: unknown): string {
 }
 
 export function databaseErrorDiagnostic(error: unknown): DatabaseErrorDiagnostic {
-  const prismaCode = error instanceof Prisma.PrismaClientKnownRequestError ? error.code
-    : error instanceof Prisma.PrismaClientInitializationError ? error.errorCode : undefined;
+  const prismaCode = error instanceof PrismaClientKnownRequestError ? error.code
+    : error instanceof PrismaClientInitializationError ? error.errorCode : undefined;
   const errorName = error instanceof Error ? error.name : "UnknownError";
   const text = `${prismaCode ?? ""} ${errorText(error)}`;
 
-  if (prismaCode === "P2028" && error instanceof Prisma.PrismaClientKnownRequestError) {
+  if (prismaCode === "P2028" && error instanceof PrismaClientKnownRequestError) {
     // P2028 covers several transaction errors. Inspect metadata, but never log it.
-    const detail = typeof error.meta?.["error"] === "string" ? error.meta["error"] : error.message;
+    const metadataError = error.meta?.["error"];
+    const detail = typeof metadataError === "string" ? metadataError : error.message;
     // Extract only recognised Prisma-generated prose. Raw messages can contain
     // query arguments, patient values, connection URLs or transaction identifiers.
     const transactionDetail = detail.match(/Unable to start a transaction in the given time\.?/i)?.[0]

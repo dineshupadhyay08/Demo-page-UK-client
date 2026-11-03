@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { Prisma, type AppointmentStatus } from "@prisma/client";
+import { PrismaClientKnownRequestError, PrismaClientInitializationError } from "@prisma/client/runtime/library";
 import {
   MAX_APPOINTMENT_DURATION_MINUTES,
   filterAvailableSlots,
@@ -113,7 +114,7 @@ function createBookingReference(): string {
 
 function isBookingReferenceConflict(error: unknown): boolean {
   return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error instanceof PrismaClientKnownRequestError &&
     error.code === "P2002" &&
     Array.isArray(error.meta?.["target"]) &&
     error.meta["target"].includes("bookingReference")
@@ -121,7 +122,7 @@ function isBookingReferenceConflict(error: unknown): boolean {
 }
 
 function isTransactionConflict(error: unknown): boolean {
-  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034";
+  return error instanceof PrismaClientKnownRequestError && error.code === "P2034";
 }
 
 export async function getAppointmentAvailability(
@@ -141,10 +142,10 @@ export async function getAppointmentAvailability(
     try {
       return await lookup();
     } catch (error) {
-      const code = error instanceof Prisma.PrismaClientInitializationError ? error.errorCode
-        : error instanceof Prisma.PrismaClientKnownRequestError ? error.code : undefined;
+      const code = error instanceof PrismaClientInitializationError ? error.errorCode
+        : error instanceof PrismaClientKnownRequestError ? error.code : undefined;
       // Prisma's engine can omit errorCode for this exact connection failure.
-      const uncodedConnectionFailure = error instanceof Prisma.PrismaClientInitializationError
+      const uncodedConnectionFailure = error instanceof PrismaClientInitializationError
         && !code && /Can't reach database server at/.test(error.message);
       // Only retry a failed read connection, never validation, missing records,
       // conflict results or writes. The outer deadline covers both attempts.

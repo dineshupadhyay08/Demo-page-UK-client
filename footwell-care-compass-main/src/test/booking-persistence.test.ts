@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError, PrismaClientInitializationError } from "@prisma/client/runtime/library";
 
 const db = vi.hoisted(() => ({
   transaction: vi.fn(), lock: vi.fn(), practitioner: vi.fn(), conflicts: vi.fn(),
@@ -16,6 +17,7 @@ vi.mock("@/server/logging/logger", () => ({ logger: { info: vi.fn(), warn: db.wa
 vi.mock("@/server/http/public-rate-limit", () => ({
   publicRequestKey: () => "test", takePublicRequestQuota: () => true,
 }));
+import { databaseErrorDiagnostic } from "@/server/db/diagnostics";
 import { POST } from "@/app/api/appointments/route";
 
 const payload = {
@@ -72,7 +74,7 @@ describe("booking persistence boundary", () => {
   });
 
   it("recognises expiration in the top-level Prisma message without leaking invocation data", async () => {
-    db.transaction.mockRejectedValueOnce(new Prisma.PrismaClientKnownRequestError(
+    db.transaction.mockRejectedValueOnce(new PrismaClientKnownRequestError(
       "private patient@example.test Transaction already closed: A commit cannot be executed on an expired transaction. The timeout for this transaction was 5000 ms, however 5800 ms passed since the start of the transaction.",
       { code: "P2028", clientVersion: "6" },
     ));
@@ -124,7 +126,7 @@ describe("booking persistence boundary", () => {
   });
 
   it("rejects serialization conflicts, missing practitioner and invalid/past inputs", async () => {
-    db.transaction.mockRejectedValueOnce(new Prisma.PrismaClientKnownRequestError("conflict", { code: "P2034", clientVersion: "6" }));
+    db.transaction.mockRejectedValueOnce(new PrismaClientKnownRequestError("conflict", { code: "P2034", clientVersion: "6" }));
     expect((await POST(request())).status).toBe(409);
     db.practitioner.mockResolvedValue(null);
     expect((await POST(request())).status).toBe(503);
@@ -139,7 +141,7 @@ describe("booking persistence boundary", () => {
     ["Transaction already closed: A query cannot be executed on an expired transaction.", "expired"],
     ["private transaction detail patient@example.test", "unclassified"],
   ])("returns controlled P2028 failure without retrying or notifying: %s", async (detail, reason) => {
-    db.transaction.mockRejectedValueOnce(new Prisma.PrismaClientKnownRequestError("private invocation and credentials", {
+    db.transaction.mockRejectedValueOnce(new PrismaClientKnownRequestError("private invocation and credentials", {
       code: "P2028", clientVersion: "6", meta: { error: detail },
     }));
     const response = await POST(request());
@@ -157,7 +159,7 @@ describe("booking persistence boundary", () => {
   });
 
   it("maps Prisma initialization connection failure safely without retrying", async () => {
-    db.transaction.mockRejectedValueOnce(new Prisma.PrismaClientInitializationError("private database host", "6", "P1001"));
+    db.transaction.mockRejectedValueOnce(new PrismaClientInitializationError("private database host", "6", "P1001"));
     expect((await POST(request())).status).toBe(503);
     expect(db.transaction).toHaveBeenCalledTimes(1);
     expect(db.after).not.toHaveBeenCalled();
@@ -169,10 +171,24 @@ describe("booking persistence boundary", () => {
   it("handles concurrent submissions when the database rejects one serialization", async () => {
     const normal = db.transaction.getMockImplementation()!;
     db.transaction.mockImplementationOnce(async (...args) => normal(...args));
-    db.transaction.mockRejectedValueOnce(new Prisma.PrismaClientKnownRequestError("conflict", { code: "P2034", clientVersion: "6" }));
+    db.transaction.mockRejectedValueOnce(new PrismaClientKnownRequestError("conflict", { code: "P2034", clientVersion: "6" }));
     const responses = await Promise.all([POST(request()), POST(request())]);
     expect(responses.map(response => response.status).sort()).toEqual([201, 409]);
     expect(db.appointment).toHaveBeenCalledTimes(1);
     expect(db.after).toHaveBeenCalledTimes(1);
+  });
+});
+
+
+describe("Prisma diagnostic type guards", () => {
+  it.each([null, undefined, 42, "private value", { code: "P2028", meta: { error: "private value" } }])("handles unknown non-error input without exposing it", value => {
+    expect(databaseErrorDiagnostic(value)).toEqual({ category: "database-unknown", errorName: "UnknownError" });
+  });
+  it("falls back to the error message when transaction metadata is not a string", () => {
+    const error = new PrismaClientKnownRequestError("Unable to start a transaction in the given time.", {
+      code: "P2028", clientVersion: "6.19.3", meta: { error: { private: "sensitive value" } },
+    });
+    expect(databaseErrorDiagnostic(error)).toMatchObject({ category: "database-timeout", transactionReason: "acquisition-timeout", prismaCode: "P2028" });
+    expect(JSON.stringify(databaseErrorDiagnostic(error))).not.toContain("sensitive value");
   });
 });
