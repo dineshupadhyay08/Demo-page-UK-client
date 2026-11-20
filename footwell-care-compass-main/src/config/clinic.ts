@@ -128,6 +128,6 @@ export const PRIMARY_NAVIGATION = [
   ["Treatments & Services", "#treatments"],
   ["Biomechanics & Orthotics", "#technology"],
   ["About the Clinic", "#about"],
-  ["Patient Stories", "#stories"],
   ["Clinical Insights", "/#journal"],
+  ["Reviews", "/#reviews"],
 ] as const;
