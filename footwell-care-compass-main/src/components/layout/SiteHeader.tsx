@@ -6,8 +6,10 @@ import { ShieldCheck, Phone, MapPin, Award, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { ActionButton } from "@/components/shared/ActionButton";
 import { CLINIC, PRIMARY_NAVIGATION } from "@/config/clinic";
+import { useActiveNavigation } from "@/components/layout/useActiveNavigation";
 
 export function SiteHeader({ onBook, onHome = false }: { onBook: () => void; onHome?: boolean }) {
+  const isActive = useActiveNavigation();
   const [menu, setMenu] = useState(false);
   const open = onBook;
   const homeHref = (href: string) => !onHome && href.startsWith("#") ? "/" + href : href;
@@ -35,8 +37,8 @@ export function SiteHeader({ onBook, onHome = false }: { onBook: () => void; onH
             <span className="font-serif text-xl text-heading">Footwell<span className="text-accent"> Podiatry</span></span>
           </a>
           <nav className="hidden shrink-0 items-center gap-5 xl:ml-4 xl:flex" aria-label="Main">
-            {PRIMARY_NAVIGATION.map(([l, h]) => <a key={h} href={homeHref(h)} className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-heading">{l}</a>)}
-            <Link href="/courses" className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-heading">Online Courses</Link>
+            {PRIMARY_NAVIGATION.map(([l, h]) => <a key={h} href={homeHref(h)} aria-current={isActive(h) ? "location" : undefined} className={`whitespace-nowrap text-sm transition-colors hover:text-heading ${isActive(h) ? "text-primary underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}>{l}</a>)}
+            <Link href="/#courses" aria-current={isActive("/#courses") ? "location" : undefined} className={`whitespace-nowrap text-sm transition-colors hover:text-heading ${isActive("/#courses") ? "text-primary underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}>Online Courses</Link>
           </nav>
           <div className="flex shrink-0 items-center gap-2 xl:ml-4">
             <ThemeToggle />
@@ -51,8 +53,8 @@ export function SiteHeader({ onBook, onHome = false }: { onBook: () => void; onH
           <div className="absolute inset-0 bg-primary/40" onClick={() => setMenu(false)} />
           <div className="absolute right-0 top-0 flex h-full w-80 max-w-full flex-col gap-1 bg-background p-6 animate-in slide-in-from-right">
             <button className="mb-4 self-end grid h-11 w-11 place-items-center rounded-full border" aria-label="Close menu" onClick={() => setMenu(false)}><X className="h-5 w-5" /></button>
-            {PRIMARY_NAVIGATION.map(([l, h]) => <a key={h} href={homeHref(h)} onClick={() => setMenu(false)} className="rounded-lg px-3 py-3 font-medium hover:bg-secondary">{l}</a>)}
-            <Link href="/courses" onClick={() => setMenu(false)} className="rounded-lg px-3 py-3 font-medium hover:bg-secondary">Online Courses</Link>
+            {PRIMARY_NAVIGATION.map(([l, h]) => <a key={h} href={homeHref(h)} onClick={() => setMenu(false)} aria-current={isActive(h) ? "location" : undefined} className={`rounded-lg px-3 py-3 font-medium hover:bg-secondary ${isActive(h) ? "text-primary underline decoration-2 underline-offset-8" : ""}`}>{l}</a>)}
+            <Link href="/#courses" onClick={() => setMenu(false)} aria-current={isActive("/#courses") ? "location" : undefined} className={`rounded-lg px-3 py-3 font-medium hover:bg-secondary ${isActive("/#courses") ? "text-primary underline decoration-2 underline-offset-8" : ""}`}>Online Courses</Link>
             <ActionButton className="mt-4" onClick={() => { setMenu(false); open(); }}>Request Appointment</ActionButton>
           </div>
         </div>
