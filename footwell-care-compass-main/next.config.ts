@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  env: {
+    SYMPTOM_FINDER_PREVIEW: String(process.env["VERCEL_ENV"] === "preview" ||
+      (!process.env["VERCEL_ENV"] && process.env.NODE_ENV === "development")),
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   turbopack: { root: __dirname },
