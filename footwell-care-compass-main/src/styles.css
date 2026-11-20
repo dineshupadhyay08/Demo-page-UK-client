@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap');
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -5,8 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-serif: "Newsreader", Georgia, serif;
-  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-serif: "Source Sans 3", system-ui, sans-serif;
+  --font-sans: "Source Sans 3", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -39,70 +40,88 @@
 }
 
 :root {
-  --radius: 0.875rem;
+  --radius: 0.75rem;
   color-scheme: light;
-  --background: #f7f5ef;
-  --foreground: #293d38;
-  --heading: #103d38;
+  --background: #ffffff;
+  --foreground: #231A31;
+  --heading: #231A31;
   --card: #ffffff;
-  --card-foreground: #293d38;
+  --card-foreground: #231A31;
   --popover: #ffffff;
-  --popover-foreground: #293d38;
-  --primary: #103d38;
+  --popover-foreground: #231A31;
+  --primary: #7136BA;
   --primary-foreground: #ffffff;
-  --primary-hover: #0b302c;
-  --secondary: #e8f0ea;
-  --secondary-foreground: #293d38;
-  --muted: #f0f2ec;
-  --muted-foreground: #5d6c64;
-  --accent: #103d38;
+  --primary-hover: #5B2EA6;
+  --secondary: #FAF7FF;
+  --secondary-foreground: #231A31;
+  --muted: #F5F0FF;
+  --muted-foreground: #6B6474;
+  --accent: #7136BA;
   --accent-foreground: #ffffff;
-  --accent-hover: #0b302c;
-  --accent-soft: #d2e2d7;
-  --gold: #9a6800;
-  --destructive: #b42318;
+  --accent-hover: #5B2EA6;
+  --accent-soft: #EDE4FF;
+  --gold: #D97706;
+  --destructive: #DC2626;
   --destructive-foreground: #ffffff;
-  --border: #d7e0d8;
+  --border: #E8E1EF;
   --input: #ffffff;
-  --ring: #103d38;
+  --ring: #7136BA;
 }
 
 .dark {
   color-scheme: dark;
-  --background: #17211d;
-  --foreground: #f0f3ee;
-  --heading: #f0f3ee;
-  --card: #202925;
-  --card-foreground: #f0f3ee;
-  --popover: #202925;
-  --popover-foreground: #f0f3ee;
-  --primary: #103d38;
-  --primary-foreground: #f0f3ee;
-  --primary-hover: #0b302c;
-  --secondary: #1c2923;
-  --secondary-foreground: #f0f3ee;
-  --muted: #26332c;
-  --muted-foreground: #bcc9be;
-  --accent: #8fc7a7;
-  --accent-foreground: #17211d;
-  --accent-hover: #b3ddc0;
-  --accent-soft: #293b31;
-  --gold: #e4c36b;
-  --destructive: #f0a6a6;
-  --destructive-foreground: #3b1515;
-  --border: #3a4940;
-  --input: #202925;
-  --ring: #b3e5c4;
+  --background: #181124;
+  --foreground: #F3EEFF;
+  --heading: #FFFFFF;
+  --card: #221A33;
+  --card-foreground: #F3EEFF;
+  --popover: #221A33;
+  --popover-foreground: #F3EEFF;
+  --primary: #8B5CF6;
+  --primary-foreground: #ffffff;
+  --primary-hover: #7C3AED;
+  --secondary: #2C2242;
+  --secondary-foreground: #F3EEFF;
+  --muted: #2E2346;
+  --muted-foreground: #A79EBA;
+  --accent: #8B5CF6;
+  --accent-foreground: #ffffff;
+  --accent-hover: #7C3AED;
+  --accent-soft: #382A56;
+  --gold: #F59E0B;
+  --destructive: #F87171;
+  --destructive-foreground: #3F1D1D;
+  --border: #3D3055;
+  --input: #221A33;
+  --ring: #8B5CF6;
 }
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; background-color: var(--color-background); }
+  html { scroll-behavior: smooth; background-color: var(--color-background); font-family: "Source Sans 3", system-ui, sans-serif; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-sans);
+    font-family: "Source Sans 3", system-ui, sans-serif;
   }
-  h1, h2, h3 { font-family: var(--font-serif); letter-spacing: -0.01em; }
+  h1, h2, h3, h4, h5, h6 { font-family: "Source Sans 3", system-ui, sans-serif; letter-spacing: -0.02em; font-weight: 700; }
   :focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+}
+
+.home-services {
+  --card: #FFFFFF;
+  --heading: #231A31;
+  --foreground: #231A31;
+  --muted-foreground: #6B6474;
+  --border: #E8E1EF;
+  --primary: #7136BA;
+  --primary-foreground: #FFFFFF;
+  --accent: #7136BA;
+  --secondary: #F5F0FF;
+  --secondary-foreground: #231A31;
+  --ring: #7136BA;
+  color: var(--foreground);
 }
