@@ -1,20 +1,29 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import {
-  Phone, MapPin, Star, ArrowRight, Clock, ScanLine, Printer,
-  Microscope, CheckCircle2, ChevronDown, Mail,
+  Phone, MapPin, ArrowRight, Clock, CalendarDays, Laptop, ChevronDown, Mail, ShieldCheck
 } from "lucide-react";
-import clinic from "@/assets/clinic.jpg";
+import onlineCareHero from "@/assets/footwell-online-care-hero.png";
 import { BookingModal } from "@/components/booking/BookingModal";
-import { PlatformPreviews } from "@/components/home/PlatformPreviews";
-import { PractitionerProfile } from "@/components/home/PractitionerProfile";
-import { SymptomFinder } from "@/components/home/SymptomFinder";
-import { ActionButton } from "@/components/shared/ActionButton";
 import { SectionEyebrow } from "@/components/shared/SectionEyebrow";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SymptomFinder } from "@/components/home/SymptomFinder";
+import { HomeHeader } from "@/components/home/HomeHeader";
 import { CLINIC, TREATMENT_CATEGORIES, TREATMENTS, type TreatmentCategory } from "@/config/clinic";
+import { COURSES } from "@/lib/courses";
+
+const treatmentPhotos: Record<string, { file: string; alt: string }> = {
+  "General Podiatry Appointment": { file: "01_general_podiatry.png", alt: "Gloved practitioner examining the sole of a foot" },
+  "Medical Pedicure": { file: "02_medical_pedicure.png", alt: "Gloved practitioner using a foot-care instrument on a toenail" },
+  "Biomechanical & Gait Assessment": { file: "03_biomechanical_gait.png", alt: "Treadmill gait assessment beside a foot-pressure display" },
+  "Custom 3D-Printed Orthotics": { file: "04_custom_orthotics.png", alt: "Blue contoured orthotic insoles beside a 3D printer" },
+  "Partial Nail Avulsion (PNA)": { file: "05_partial_nail_avulsion.png", alt: "Gloved practitioner treating the edge of a toenail" },
+  "Verruca Treatment (Swift / Needling)": { file: "06_verruca_treatment.png", alt: "Treatment instrument held near the sole of a foot" },
+  "Diabetic Foot Assessment": { file: "07_diabetic_foot.png", alt: "Gloved practitioner examining a foot" },
+  "Wound & Ulcer Care Review": { file: "08_wound_ulcer_care.png", alt: "Gloved practitioner applying a dressing beside an ankle wound" },
+};
 
 export function HomePage({ journalCards }: { journalCards: ReactNode }) {
   const [booking, setBooking] = useState<string | null>(null);
@@ -22,193 +31,270 @@ export function HomePage({ journalCards }: { journalCards: ReactNode }) {
   const open = (t = "") => setBooking(t);
 
   return (
-    <div className="min-h-screen">
-      <SiteHeader onBook={() => open()} onHome />
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased">
+      <HomeHeader onBook={() => open()} />
 
       <main>
-        {/* Hero */}
-        <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
-          <div>
-            <SectionEyebrow>Private podiatry · Marylebone</SectionEyebrow>
-            <h1 className="text-4xl leading-[1.08] text-heading sm:text-5xl lg:text-6xl">
-              Specialist podiatry and lower-limb care <em className="text-[#328673]">tailored to your movement.</em>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Clinically precise assessment, evidence-based treatment and personalised plans that help patients of all ages move without pain.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ActionButton onClick={() => open()}>Request an Assessment <ArrowRight className="h-4 w-4" /></ActionButton>
-              <a href="#treatments" className="inline-flex min-h-11 items-center rounded-full border border-primary/20 px-6 text-sm font-semibold text-heading hover:bg-secondary">Explore Treatments</a>
+        <section aria-labelledby="online-care-heading" className="overflow-hidden bg-[#F5F0FF] text-[#231A31]">
+          <div className="mx-auto grid max-w-[1440px] items-center gap-5 px-5 pt-10 sm:px-8 sm:pt-14 lg:min-h-[630px] lg:grid-cols-[0.95fr_1.05fr] lg:gap-0 lg:px-12 lg:py-[clamp(3rem,4.8vw,4.25rem)]">
+            <div className="relative z-10 pb-3 lg:-mr-10 lg:pb-0">
+              <p className="mb-6 inline-block rounded-full bg-[#EDE4FF] px-4 py-1.5 text-sm font-semibold text-[#7136BA]">ONLINE FOOT CARE &amp; SUPPORT</p>
+              <h1 id="online-care-heading" className="max-w-[18ch] text-[clamp(2.25rem,4.1vw,3.6rem)] font-bold leading-[1.08] tracking-[-0.035em] text-[#231A31]">
+                Expert Foot Care and Professional Support, <span className="italic text-[#7136BA]">Online.</span>
+              </h1>
+              <p className="mt-5 max-w-[33rem] text-[clamp(1.0625rem,1.4vw,1.1875rem)] leading-relaxed">Book appointments, get expert advice and access trusted resources for healthier feet — all in one place.</p>
+              <div className="mt-8 flex flex-wrap gap-3.5">
+                <button type="button" onClick={() => open()} className="inline-flex min-h-[50px] items-center justify-center gap-3 rounded-2xl bg-[#7136BA] px-6 text-base font-semibold text-white transition-colors hover:bg-[#5B2EA6]">Book Appointment <ArrowRight className="size-[18px]" aria-hidden /></button>
+                <a href="#services" className="inline-flex min-h-[50px] items-center justify-center rounded-2xl border border-[#7136BA]/40 px-6 text-base font-semibold transition-colors hover:bg-white">Explore Services</a>
+              </div>
+              <ul className="mt-10 grid max-w-[32rem] grid-cols-3 divide-x divide-[#7136BA]/25 pb-3 text-center text-[0.8125rem] font-semibold sm:mt-12 sm:text-sm">
+                {[{ icon: Laptop, label: "Book Online" }, { icon: CalendarDays, label: "Expert Care" }, { icon: ShieldCheck, label: "Trusted Support" }].map(({ icon: Icon, label }) => <li key={label} className="px-2"><Icon className="mx-auto mb-2.5 size-7 text-[#7136BA]" strokeWidth={1.5} aria-hidden />{label}</li>)}
+              </ul>
             </div>
-            <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t pt-6">
-              {[["HCPC", "Registered practitioner"], ["15+ yrs", "NHS & private experience"], ["4.9★", "From 380+ patient reviews"]].map(([a, b]) => (
-                <div key={a}><dt className="font-serif text-2xl text-heading">{a}</dt><dd className="mt-1 text-xs text-muted-foreground">{b}</dd></div>
-              ))}
-            </dl>
+            <div className="relative -mx-5 sm:-mx-8 lg:-mr-12 lg:ml-0">
+              <Image src={onlineCareHero} alt="Conceptual Footwell online-care workspace with a laptop, appointment-booking phone visual, plant and notebook" sizes="(max-width: 1023px) 95vw, 55vw" preload className="mx-auto h-auto w-[95%] [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] lg:w-full lg:[mask-image:linear-gradient(to_right,transparent,black_15%,black_92%,transparent)]" />
+            </div>
           </div>
-          <div className="relative">
-            <Image src={clinic} alt="Treatment room at Footwell Podiatry, Marylebone" className="aspect-[5/6] w-full rounded-[2rem] object-cover shadow-2xl shadow-primary/10 dark:brightness-110 dark:saturate-90" priority />
-            {[["Gait Analysis", "top-8 -left-3 sm:-left-6"], ["Custom Orthotics", "top-1/2 -right-3 sm:-right-6"], ["Nail Surgery", "bottom-10 left-6"]].map(([t, pos]) => (
-              <a key={t} href="#treatments" className={`absolute ${pos} flex items-center gap-2 rounded-full border bg-card/95 px-4 py-2.5 text-sm font-medium text-heading shadow-lg backdrop-blur transition-transform hover:-translate-y-0.5`}>
-                <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />{t}
-              </a>
+        </section>
+
+        {/* 2. Services / Treatment Categories — Clean image-led service presentation */}
+        <section id="services" className="home-services bg-[#FAF7FF] py-16 lg:py-[90px] scroll-mt-24">
+          <div className="mx-auto max-w-7xl px-5">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <SectionEyebrow>Services & Treatments</SectionEyebrow>
+              <h2 className="text-3xl font-bold text-heading sm:text-4xl">Clinical care categories</h2>
+            </div>
+            <div className="flex flex-wrap gap-2" role="tablist" aria-label="Treatment categories">
+              {TREATMENT_CATEGORIES.map((c) => (
+                <button
+                  key={c}
+                  role="tab"
+                  aria-selected={cat === c}
+                  onClick={() => setCat(c)}
+                  className={`min-h-11 rounded-full border px-5 text-sm font-medium transition-colors ${
+                    cat === c
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-card text-heading hover:bg-secondary"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2" role="tabpanel">
+            {TREATMENTS.filter((t) => t.cat === cat).map((t) => (
+              <article key={t.name} className="relative isolate flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-8">
+                <div className="pointer-events-none absolute inset-y-0 right-0 -z-10 w-1/2 [mask-image:linear-gradient(to_right,transparent,black_20%)]">
+                  <Image src={`/images/treatments/${treatmentPhotos[t.name]!.file}`} alt={treatmentPhotos[t.name]!.alt} fill sizes="(min-width: 1280px) 310px, (min-width: 768px) 25vw, 50vw" className="object-cover object-center" />
+                </div>
+                <div>
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <span className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-accent">
+                      <t.icon className="h-6 w-6" aria-hidden />
+                    </span>
+                    <div className="relative rounded-lg bg-[rgba(245,240,255,0.88)] px-3 py-1 text-right text-[#5B2EA6]">
+                      <span className="block text-xs font-medium uppercase leading-4 tracking-wider">From</span>
+                      <span className="block text-xl font-bold leading-6">£{t.from}</span>
+                    </div>
+                  </div>
+                  <h3 className="w-fit bg-white text-xl font-bold text-heading">{t.name}</h3>
+                  <p className="mt-2 flex w-fit items-center gap-2 bg-white text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4" aria-hidden /> {t.mins} minute session
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-1.5">
+                    {t.symptoms.map((s) => (
+                      <span key={s} className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-8 flex items-center justify-between pt-[25px]">
+                  <span className="bg-white text-xs text-muted-foreground">Includes clinical assessment</span>
+                  <button
+                    onClick={() => open(t.name)}
+                    className="-mx-3 -my-1 inline-flex items-center gap-1.5 rounded-lg bg-[rgba(245,240,255,0.9)] px-3 py-1 text-sm font-bold text-[#5B2EA6] underline-offset-4 hover:underline"
+                  >
+                    Request appointment <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+          </div>
+        </section>
+
+        {/* 3. Courses Preview — Clean Coursera-like trending course cards */}
+        <section id="courses" className="bg-secondary/40 py-16 lg:py-[90px] border-y border-border/60 scroll-mt-24">
+          <div className="mx-auto max-w-7xl px-5">
+            <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
+              <div>
+                <SectionEyebrow>Foot Health Academy</SectionEyebrow>
+                <h2 className="text-3xl font-bold text-heading sm:text-4xl">Featured educational courses</h2>
+              </div>
+              <Link href="/courses" className="inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline">
+                View all courses <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {COURSES.map((course) => (
+                <div key={course.slug} className="flex flex-col rounded-2xl border border-border bg-card overflow-hidden">
+                  <div className="aspect-[16/10] relative w-full bg-secondary">
+                    <Image src={course.image} alt="" className="object-cover w-full h-full" />
+                  </div>
+                  <div className="p-6 flex flex-1 flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-accent">{course.level}</span>
+                        <span className="text-xs text-muted-foreground">{course.lessons.length} lessons</span>
+                      </div>
+                      <h3 className="font-bold text-lg text-heading">{course.title}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between">
+                      <span className="text-xs font-medium text-muted-foreground">Self-paced learning</span>
+                      <Link href={`/courses/${course.slug}`} className="text-sm font-bold text-accent hover:underline">
+                        Explore course
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Advice & Journal */}
+        <section id="journal" className="bg-secondary/40 py-16 lg:py-[90px] border-y border-border/60 scroll-mt-24">
+          <div className="mx-auto max-w-7xl px-5">
+            <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
+              <div>
+                <SectionEyebrow>Advice & Journal</SectionEyebrow>
+                <h2 className="text-3xl font-bold text-heading sm:text-4xl">Clinical insights and guides</h2>
+              </div>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {journalCards}
+            </div>
+          </div>
+        </section>
+
+        {/* 5. Testimonials — Clean Coursera-like quote blocks */}
+        <section id="reviews" className="mx-auto max-w-7xl px-5 py-16 lg:py-[90px] scroll-mt-24">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <SectionEyebrow>Patient Testimonials</SectionEyebrow>
+            <h2 className="text-3xl font-bold text-heading sm:text-4xl">Stories of recovery</h2>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              { q: "Eight months of morning heel pain resolved within ten weeks. The clarity of the assessment and home exercise plan made all the difference.", n: "Sarah M.", c: "Plantar fasciitis" },
+              { q: "Clear explanation of my gait mechanics and custom orthotics that actually fit comfortably into my work and running shoes.", n: "James T.", c: "Biomechanical assessment" },
+              { q: "Professional, reassuring, and completely painless minor nail surgery. Excellent follow-up care instructions.", n: "Margaret L.", c: "Minor nail surgery" },
+            ].map((t, idx) => (
+              <blockquote key={idx} className="flex flex-col justify-between rounded-2xl border border-border bg-card p-8">
+                <p className="text-muted-foreground leading-relaxed italic">&ldquo;{t.q}&rdquo;</p>
+                <footer className="mt-6 pt-4 border-t border-border/60">
+                  <p className="font-bold text-heading text-sm">{t.n}</p>
+                  <p className="text-xs text-accent mt-0.5">{t.c}</p>
+                </footer>
+              </blockquote>
             ))}
           </div>
         </section>
 
-        {/* Treatments */}
-        <section id="treatments" className="bg-card py-20">
-          <div className="mx-auto max-w-7xl px-5">
-            <div className="flex flex-wrap items-end justify-between gap-6">
-              <div className="max-w-2xl">
-                <SectionEyebrow>Treatments & services</SectionEyebrow>
-                <h2 className="text-3xl text-heading sm:text-4xl">Care for every stage of foot health</h2>
-              </div>
-              <p className="max-w-sm text-sm text-muted-foreground">Indicative fees shown. Your exact plan is confirmed after assessment. Most major insurers accepted.</p>
-            </div>
-            <div className="mt-10 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Treatment categories">
-              {TREATMENT_CATEGORIES.map((c) => (
-                <button key={c} role="tab" aria-selected={cat === c} onClick={() => setCat(c)}
-                  className={`min-h-11 shrink-0 rounded-full border px-5 text-sm font-medium transition-colors ${cat === c ? "border-primary bg-primary text-primary-foreground" : "hover:bg-secondary"}`}>{c}</button>
-              ))}
-            </div>
-            <div className="mt-8 grid gap-5 md:grid-cols-2" role="tabpanel">
-              {TREATMENTS.filter((t) => t.cat === cat).map((t) => (
-                <article key={t.name} className="group rounded-2xl border bg-background p-7 transition-shadow hover:shadow-xl hover:shadow-primary/5 animate-in fade-in">
-                  <div className="flex items-start justify-between gap-4">
-                    <span className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-accent"><t.icon className="h-6 w-6" aria-hidden /></span>
-                    <div className="text-right"><p className="text-xs text-muted-foreground">From</p><p className="font-serif text-2xl text-heading">£{t.from}</p></div>
-                  </div>
-                  <h3 className="mt-5 text-xl text-heading">{t.name}</h3>
-                  <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><Clock className="h-4 w-4" aria-hidden />{t.mins} minutes</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <span className="text-xs text-muted-foreground">Helps with:</span>
-                    {t.symptoms.map((s) => <span key={s} className="rounded-full bg-secondary px-2.5 py-0.5 text-xs text-secondary-foreground">{s}</span>)}
-                  </div>
-                  <button onClick={() => open(t.name)} className="mt-6 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-accent group-hover:gap-2.5 transition-all">Request Consultation <ArrowRight className="h-4 w-4" /></button>
-                </article>
-              ))}
-            </div>
+        {/* 6. FAQ Section */}
+        <section className="mx-auto grid max-w-7xl items-start gap-8 px-5 py-16 lg:grid-cols-[minmax(0,11fr)_minmax(0,9fr)] lg:py-[90px]">
+          <div className="min-w-0">
+          <div className="mb-8">
+            <SectionEyebrow>Common Questions</SectionEyebrow>
+            <h2 className="text-3xl font-bold text-heading sm:text-4xl">Everything you need to know</h2>
           </div>
-        </section>
-
-        {/* Technology */}
-        <section id="technology" className="bg-primary py-20 text-primary-foreground">
-          <div className="mx-auto max-w-7xl px-5">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Technology & clinical standards</p>
-            <h2 className="max-w-2xl text-3xl sm:text-4xl">Measured precisely. Treated conservatively.</h2>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {[
-                { i: ScanLine, t: "Pressure plate & video gait analysis", d: "Dynamic plantar pressure mapping and slow-motion treadmill capture reveal how load moves through your foot with every step." },
-                { i: Printer, t: "Custom 3D-printed orthotics", d: "Scan, prescribe, print, review. Lightweight devices built to your prescription and refined at a six-week follow-up." },
-                { i: Microscope, t: "Evidence-based procedures", d: "Minimally invasive nail surgery and verruca treatments under local anaesthetic, following NICE and College guidance." },
-              ].map(({ i: I, t, d }, n) => (
-                <div key={t} className="rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 p-7">
-                  <div className="flex items-center justify-between"><I className="h-7 w-7 text-gold" aria-hidden /><span className="font-serif text-4xl text-primary-foreground/20">0{n + 1}</span></div>
-                  <h3 className="mt-6 text-xl">{t}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-primary-foreground/70">{d}</p>
-                </div>
-              ))}
-            </div>
-            <ol className="mt-12 grid gap-4 sm:grid-cols-4">
-              {["3D foot scan", "Clinical prescription", "Printed in 10 days", "Fit & 6-week review"].map((s, i) => (
-                <li key={s} className="flex items-center gap-3 text-sm"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-xs font-bold">{i + 1}</span>{s}</li>
-              ))}
-            </ol>
+          <div className="divide-y divide-border/80 rounded-2xl border border-border bg-card">
+            {[
+              ["Do I need a GP or NHS referral?", "No. You can self-refer directly for private podiatry assessments. We communicate with your GP if further medical collaboration is needed."],
+              ["What should I bring to my appointment?", "Please bring your everyday footwear as well as any specific sports or running shoes you use regularly."],
+              ["Are treatments covered by health insurance?", "We are recognised by major private insurers including Bupa and AXA. Please verify your individual policy prior to booking."],
+              ["Where is the clinic located?", "Our practice is situated at 42 Wimpole Street, Marylebone, London W1G 8YF, offering easy access and ground-floor facilities."]
+            ].map(([q, a]) => (
+              <details key={q} className="group p-6">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold text-heading text-base">
+                  {q}
+                  <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{a}</p>
+              </details>
+            ))}
           </div>
-        </section>
-
-        {/* Platform previews */}
-        <PlatformPreviews onBook={() => open()} />
-
-        <PractitionerProfile />
-
-        {/* Stories */}
-        <section id="stories" className="bg-card py-20">
-          <div className="mx-auto max-w-7xl px-5">
-            <SectionEyebrow>Patient stories</SectionEyebrow>
-            <h2 className="text-3xl text-heading sm:text-4xl">Recoveries, step by step</h2>
-            <div className="mt-10 grid gap-6 lg:grid-cols-3">
-              {[
-                { n: "Sarah M., 42", c: "Plantar fasciitis", q: "Eight months of morning heel pain gone in ten weeks. The gait video made everything click.", steps: ["Wk 0: Gait assessment", "Wk 2: Orthotics + loading plan", "Wk 10: Back to 10k runs"] },
-                { n: "James T., 29", c: "Runner's knee", q: "Eleanor spotted a hip-driven collapse no one else had. Marathon completed pain-free.", steps: ["Wk 0: Pressure plate scan", "Wk 3: Strength programme", "Wk 14: London Marathon"] },
-                { n: "Margaret L., 67", c: "Chronic ingrown nail", q: "Years of infections, sorted with one calm, painless procedure. I wish I had come sooner.", steps: ["Day 0: Consultation", "Day 7: PNA procedure", "Wk 6: Fully healed"] },
-              ].map((r) => (
-                <figure key={r.n} className="flex flex-col rounded-2xl border bg-background p-7">
-                  <div className="flex gap-0.5 text-gold" aria-label="5 out of 5 stars">{[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-current" aria-hidden />)}</div>
-                  <span className="mt-4 w-fit rounded-full bg-secondary px-3 py-1 text-xs font-medium text-accent">{r.c}</span>
-                  <blockquote className="mt-4 flex-1 font-serif text-lg leading-relaxed text-heading">&ldquo;{r.q}&rdquo;</blockquote>
-                  <ol className="mt-6 space-y-2 border-l border-accent/30 pl-4">
-                    {r.steps.map((s) => <li key={s} className="relative text-xs text-muted-foreground before:absolute before:-left-[1.3rem] before:top-1 before:h-2 before:w-2 before:rounded-full before:bg-accent">{s}</li>)}
-                  </ol>
-                  <figcaption className="mt-5 flex items-center gap-1.5 text-sm font-semibold">{r.n}<CheckCircle2 className="h-4 w-4 text-accent" aria-label="Verified patient" /></figcaption>
-                </figure>
-              ))}
-            </div>
           </div>
+          <SymptomFinder onBook={open} />
         </section>
 
-        {/* Journal */}
-        <section id="journal" className="mx-auto max-w-7xl scroll-mt-24 px-5 py-20">
-          <SectionEyebrow>Advice & journal</SectionEyebrow>
-          <h2 className="text-3xl text-heading sm:text-4xl">Clinical insights</h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">{journalCards}</div>
-        </section>
-
-        {/* FAQ + Symptom */}
-        <section id="symptoms" className="bg-secondary py-20">
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2">
-            <div>
-              <SectionEyebrow>Questions</SectionEyebrow>
-              <h2 className="text-3xl text-heading sm:text-4xl">Before your visit</h2>
-              <div className="mt-8 divide-y rounded-2xl border bg-card">
-                {[
-                  ["Do I need a GP or NHS referral?", "No. You can self-refer for private podiatry. NHS podiatry is available via your GP but waiting times vary by area and eligibility criteria apply."],
-                  ["What should I wear to an assessment?", "Shorts or loose trousers that roll above the knee, plus your usual everyday and sports shoes so we can review wear patterns."],
-                  ["Is treatment covered by health insurance?", "We are recognised by most major UK insurers including Bupa, AXA Health and Vitality. Please check your policy and pre-authorisation before attending."],
-                  ["How long is recovery after nail surgery?", "Most people return to work the next day. Full healing typically takes four to eight weeks with simple dressing changes."],
-                ].map(([q, a]) => (
-                  <details key={q} className="group p-5">
-                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-medium">{q}<ChevronDown className="h-5 w-5 shrink-0 transition-transform group-open:rotate-180" aria-hidden /></summary>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{a}</p>
-                  </details>
-                ))}
-              </div>
+        {/* 7. Final Booking CTA */}
+        <section className="mx-auto max-w-7xl px-5 pb-16">
+          <div className="rounded-3xl bg-primary text-primary-foreground p-10 lg:p-16 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Ready to start your recovery?</h2>
+            <p className="mt-4 text-primary-foreground/80 max-w-xl mx-auto text-base leading-relaxed">
+              Book your consultation in Marylebone or request an appointment online today.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <button
+                onClick={() => open()}
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-transparent bg-white px-6 py-3 text-base font-bold text-[#5B2EA6] transition-colors hover:bg-[#F5F0FF] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-auto"
+              >
+                <CalendarDays className="h-5 w-5 shrink-0" aria-hidden /> Request Appointment
+              </button>
+              <a
+                href={`tel:${CLINIC.phone.replace(/\s/g, "")}`}
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-white/40 bg-transparent px-6 py-3 text-base font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-auto"
+              >
+                <Phone className="h-5 w-5 shrink-0" aria-hidden /> {CLINIC.phone}
+              </a>
             </div>
-            <SymptomFinder onBook={open} />
           </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-primary text-primary-foreground">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-2 lg:grid-cols-4">
+      <footer className="bg-heading text-background pt-16 pb-12 border-t border-border">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-serif text-2xl">Footwell Podiatry</p>
-            <p className="mt-3 text-sm text-primary-foreground/70">Specialist podiatry and lower-limb care in the heart of Marylebone.</p>
+            <p className="font-bold text-xl text-white">Footwell Podiatry</p>
+            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+              Specialist podiatry and lower-limb care in Marylebone, London.
+            </p>
           </div>
-          <div className="space-y-3 text-sm">
-            <p className="font-semibold">Contact</p>
-            <p className="flex gap-2 text-primary-foreground/80"><MapPin className="h-4 w-4 shrink-0" aria-hidden />{CLINIC.address}</p>
-            <a href={`tel:${CLINIC.phone.replace(/\s/g, "")}`} className="flex gap-2 text-primary-foreground/80 hover:underline"><Phone className="h-4 w-4" aria-hidden />{CLINIC.phone}</a>
-            <a href={`mailto:${CLINIC.email}`} className="flex gap-2 text-primary-foreground/80 hover:underline"><Mail className="h-4 w-4" aria-hidden />{CLINIC.email}</a>
+          <div className="space-y-2 text-sm">
+            <p className="font-bold text-white text-xs uppercase tracking-wider">Contact</p>
+            <p className="flex items-start gap-2 text-muted-foreground"><MapPin className="h-4 w-4 shrink-0 mt-1 text-accent" />{CLINIC.address}</p>
+            <a href={`tel:${CLINIC.phone.replace(/\s/g, "")}`} className="flex items-center gap-2 text-muted-foreground hover:text-white"><Phone className="h-4 w-4 text-accent" />{CLINIC.phone}</a>
+            <a href={`mailto:${CLINIC.email}`} className="flex items-center gap-2 text-muted-foreground hover:text-white"><Mail className="h-4 w-4 text-accent" />{CLINIC.email}</a>
           </div>
           <div className="text-sm">
-            <p className="font-semibold">Opening hours</p>
-            <dl className="mt-3 grid grid-cols-2 gap-y-1.5 text-primary-foreground/80">
-              <dt>Mon – Thu</dt><dd>08:00 – 19:00</dd><dt>Friday</dt><dd>08:00 – 17:00</dd><dt>Saturday</dt><dd>09:00 – 13:00</dd><dt>Sunday</dt><dd>Closed</dd>
+            <p className="font-bold text-white text-xs uppercase tracking-wider">Hours</p>
+            <dl className="mt-3 grid grid-cols-2 gap-y-1.5 text-muted-foreground">
+              <dt>Mon – Thu</dt><dd className="text-right text-white">08:00 – 19:00</dd>
+              <dt>Friday</dt><dd className="text-right text-white">08:00 – 17:00</dd>
+              <dt>Saturday</dt><dd className="text-right text-white">09:00 – 13:00</dd>
             </dl>
           </div>
-          <iframe title="Map of the clinic in Marylebone" className="h-44 w-full rounded-xl border-0 grayscale" loading="lazy"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=-0.1520%2C51.5160%2C-0.1440%2C51.5210&layer=mapnik&marker=51.5186%2C-0.1480" />
+          <div className="overflow-hidden rounded-xl border border-border/20">
+            <iframe
+              title="Marylebone clinic map"
+              className="h-full w-full min-h-[160px] border-0 grayscale opacity-90"
+              loading="lazy"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-0.1520%2C51.5160%2C-0.1440%2C51.5210&layer=mapnik&marker=51.5186%2C-0.1480"
+            />
+          </div>
         </div>
-        <div className="border-t border-primary-foreground/10">
-          <div className="mx-auto max-w-7xl space-y-3 px-5 py-6 text-xs text-primary-foreground/60">
-            <p>{CLINIC.practitioner} is registered with the Health and Care Professions Council (HCPC) and is a member of the Royal College of Podiatry. Information on this site is for general education and does not replace individual clinical advice. In an emergency, call 999 or contact NHS 111.</p>
-            <div className="flex flex-wrap gap-5">
-              <span>© 2026 Footwell Podiatry</span>
-              <a href="#" className="hover:underline">Privacy policy</a><a href="#" className="hover:underline">Accessibility</a><a href="#" className="hover:underline">Complaints procedure</a>
-            </div>
+        <div className="mx-auto max-w-7xl px-5 mt-12 pt-8 border-t border-border/10 text-xs text-muted-foreground flex flex-wrap justify-between items-center gap-4">
+          <p>{CLINIC.practitioner} is registered with the Health and Care Professions Council (HCPC).</p>
+          <div className="flex gap-6">
+            <span>© 2026 Footwell Podiatry</span>
+            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+            <a href="#" className="hover:text-white transition-colors">Accessibility</a>
           </div>
         </div>
       </footer>
