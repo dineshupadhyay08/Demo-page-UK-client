@@ -15,6 +15,7 @@ export type DatabaseErrorDiagnostic = Readonly<{
   category: DatabaseErrorCategory;
   errorName: string;
   prismaCode?: string | undefined;
+  schemaField?: string;
   transactionReason?: "acquisition-timeout" | "expired" | "unclassified";
   transactionDetail?: string;
 }>;
@@ -25,13 +26,27 @@ function errorText(error: unknown): string {
   return `${error.message} ${cause}`;
 }
 
+// Next's development runtime can load another copy of the Prisma runtime.
+export function isKnownDatabaseError(error: unknown): error is PrismaClientKnownRequestError {
+  return error instanceof PrismaClientKnownRequestError ||
+    (error instanceof Error && error.name === "PrismaClientKnownRequestError" &&
+      "code" in error && typeof error.code === "string" && /^P\d{4}$/.test(error.code));
+}
+
 export function databaseErrorDiagnostic(error: unknown): DatabaseErrorDiagnostic {
-  const prismaCode = error instanceof PrismaClientKnownRequestError ? error.code
+  const prismaCode = isKnownDatabaseError(error) ? error.code
     : error instanceof PrismaClientInitializationError ? error.errorCode : undefined;
   const errorName = error instanceof Error ? error.name : "UnknownError";
   const text = `${prismaCode ?? ""} ${errorText(error)}`;
 
-  if (prismaCode === "P2028" && error instanceof PrismaClientKnownRequestError) {
+  if (prismaCode === "P2021" || prismaCode === "P2022") {
+    const column = isKnownDatabaseError(error) ? error.meta?.["column"] : undefined;
+    const knownFields = ["requestKey", "requestDigest", "guestContact", "noticeVersion"];
+    const schemaField = knownFields.find(name => column === name || column === `Appointment.${name}`);
+    return { category: "database-schema", errorName, prismaCode, ...(schemaField ? { schemaField } : {}) };
+  }
+
+  if (prismaCode === "P2028" && isKnownDatabaseError(error)) {
     // P2028 covers several transaction errors. Inspect metadata, but never log it.
     const metadataError = error.meta?.["error"];
     const detail = typeof metadataError === "string" ? metadataError : error.message;
