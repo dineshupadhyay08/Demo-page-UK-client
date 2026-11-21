@@ -103,6 +103,19 @@ describe("Review submit handler", () => {
     expect(submitProps(render())!.disabled).toBe(false);
   });
 
+  it("refreshes times after a conflict and preserves the patient's details", async () => {
+    const details = hooks.values[8];
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(Response.json({ ok: false, error: { code: "APPOINTMENT_UNAVAILABLE" } }, { status: 409 }))
+      .mockResolvedValueOnce(Response.json({ ok: true, data: { slots: [{ time: "11:00" }] } }));
+    vi.stubGlobal("fetch", fetchMock);
+    submitProps(render())!.onClick();
+    await vi.waitFor(() => expect(hooks.values[4]).toEqual([{ time: "11:00" }]));
+    expect(hooks.values[0]).toBe(1);
+    expect(hooks.values[3]).toBeNull();
+    expect(hooks.values[8]).toBe(details);
+  });
+
   it("shows missing-slot feedback and returns invalid patient details to the editable step", () => {
     const fetchMock = vi.fn(); vi.stubGlobal("fetch", fetchMock);
     hooks.values[3] = null;

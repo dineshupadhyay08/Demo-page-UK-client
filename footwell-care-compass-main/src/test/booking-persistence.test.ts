@@ -62,6 +62,15 @@ describe("booking persistence boundary", () => {
     expect(db.notify).toHaveBeenCalledWith(expect.objectContaining({ status: "PENDING" }), payload);
   });
 
+  it("rejects oversized streamed bodies, unsupported media and foreign browser origins", async () => {
+    for (const req of [
+      request({ ...payload, patientNote: "x".repeat(17000) }),
+      new Request("http://localhost/api/appointments", { method: "POST", body: JSON.stringify(payload) }),
+      new Request("http://localhost/api/appointments", { method: "POST", headers: { origin: "https://other.example", "content-type": "application/json" }, body: JSON.stringify(payload) }),
+    ]) expect((await POST(req)).status).toBe(400);
+    expect(db.transaction).not.toHaveBeenCalled();
+  });
+
   it("checks practitioner before opening the transaction and handles independent bookings", async () => {
     expect((await POST(request())).status).toBe(201);
     expect((await POST(request({ ...payload, appointmentTime: "12:00" }))).status).toBe(201);
@@ -184,6 +193,17 @@ describe("Prisma diagnostic type guards", () => {
   it.each([null, undefined, 42, "private value", { code: "P2028", meta: { error: "private value" } }])("handles unknown non-error input without exposing it", value => {
     expect(databaseErrorDiagnostic(value)).toEqual({ category: "database-unknown", errorName: "UnknownError" });
   });
+  it("recognizes schema errors from a separate Prisma runtime without exposing submitted data", () => {
+    const error = Object.assign(new Error("private request details"), {
+      name: "PrismaClientKnownRequestError", code: "P2022", meta: { column: "Appointment.requestKey" },
+    });
+    expect(databaseErrorDiagnostic(error)).toEqual({
+      errorName: error.name, category: "database-schema", prismaCode: "P2022", schemaField: "requestKey",
+    });
+    error.meta.column = "private details";
+    expect(databaseErrorDiagnostic(error)).not.toHaveProperty("schemaField");
+  });
+
   it("falls back to the error message when transaction metadata is not a string", () => {
     const error = new PrismaClientKnownRequestError("Unable to start a transaction in the given time.", {
       code: "P2028", clientVersion: "6.19.3", meta: { error: { private: "sensitive value" } },
