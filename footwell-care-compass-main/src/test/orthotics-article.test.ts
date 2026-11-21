@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import content from "@/content/journal/articles.json";
 import type { JournalArticle } from "@/lib/journal";
 vi.mock("server-only", () => ({}));
-vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("NOT_FOUND"); } }));
+vi.mock("next/navigation", () => ({ usePathname: () => "/advice-journal/test", notFound: () => { throw new Error("NOT_FOUND"); } }));
 vi.mock("@/components/theme/ThemeToggle", () => ({ ThemeToggle: () => null }));
 vi.mock("@/components/journal/JournalBooking", () => ({ JournalBooking: () => null }));
 import ArticlePage, { generateMetadata } from "@/app/advice-journal/[slug]/page";

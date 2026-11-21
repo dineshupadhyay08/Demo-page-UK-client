@@ -16,7 +16,7 @@ import { PRIMARY_NAVIGATION } from "@/config/clinic";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 vi.mock("@/components/theme/ThemeToggle", () => ({ ThemeToggle: () => null }));
 vi.mock("@/components/journal/JournalBooking", () => ({ JournalBooking: () => null }));
-vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("NOT_FOUND"); }, redirect: (url: string) => { throw new Error(`REDIRECT:${url}`); } }));
+vi.mock("next/navigation", () => ({ usePathname: () => "/advice-journal/test", notFound: () => { throw new Error("NOT_FOUND"); }, redirect: (url: string) => { throw new Error(`REDIRECT:${url}`); } }));
 
 const drafts = content as JournalArticle[];
 const now = new Date("2026-11-02T12:00:00Z");
@@ -73,7 +73,7 @@ describe("editorial library", () => {
     expect(article).toContain('aria-label="Open menu"');
   });
   it("routes navigation to the homepage anchor and redirects the old listing", () => {
-    expect(drafts.slice(0, 3).map(readingMinutes)).toEqual([6, 8, 5]);
+    expect(drafts.slice(0, 3).map(readingMinutes)).toEqual([8, 9, 7]);
     expect(PRIMARY_NAVIGATION).toContainEqual(["Clinical Insights", "/#journal"]);
     expect(() => JournalPage()).toThrow("REDIRECT:/#journal");
   });
@@ -81,15 +81,15 @@ describe("editorial library", () => {
     for (const a of drafts) {
       const html = renderToStaticMarkup(await ArticlePage({ params: Promise.resolve({ slug: a.slug }) }));
       expect(html).toContain("Awaiting clinical review.");
-      expect(html).toContain('role="tabpanel"');
+      for (const section of a.sections) expect(html.split(`id="${section.id}"`)).toHaveLength(2);
       expect(html).toContain("Continue Exploring");
       expect(html).toContain("At a glance");
       expect(html).toContain('aria-label="Article topics"');
-      expect(html).toContain('aria-selected="true"');
+      expect(html).toContain('aria-current="location"');
       expect(html).toContain("On this page: ");
       expect(html).not.toContain('href="#overview"');
       expect(a.overview).toHaveLength(5);
-      expect((html.match(/role="tabpanel"/g) ?? []).length).toBe(1);
+      expect(html.split('href="#at-a-glance"')).toHaveLength(3);
       expect(html).not.toContain("Reviewed by Dr Eleanor Hart");
       for (const other of drafts.filter(d => d.slug !== a.slug)) expect(html).toContain(`href="/advice-journal/${other.slug}"`);
       expect((html.match(/after:absolute/g) ?? []).length).toBe(3);
@@ -158,23 +158,29 @@ describe("editorial library", () => {
 
 
 describe("educational article layouts", () => {
-  for (const article of drafts.slice(0, 3)) it(`preserves all content and prepares five distinct image positions for ${article.slug}`, () => {
+  for (const article of drafts.slice(0, 3)) it(`preserves all content and renders the configured image positions for ${article.slug}`, () => {
     const sections = article.sections.map(section => renderToStaticMarkup(createElement(EducationalSection, { article, section })));
     for (const [index, section] of article.sections.entries()) {
       for (const paragraph of section.paragraphs) {
         const escaped = renderToStaticMarkup(createElement("p", null, paragraph)).slice(3, -4);
-        expect(sections[index]).toContain(escaped);
+        const renderedText = Array.from(sections[index]!.matchAll(/<(p|td)\b[^>]*>([\s\S]*?)<\/\1>/g), match => match[2]!.replace(/<[^>]*>/g, "")).join(" ");
+        expect(renderedText).toContain(escaped);
       }
       for (const number of section.references) expect(sections[index]).toContain(`href="${article.references[number - 1]!.url}"`);
     }
     const html = sections.join("");
-    const slots = [...html.matchAll(/data-image-slot="([^"]+)"/g)].map(match => match[1]);
-    expect(slots).toHaveLength(5);
-    expect(new Set(slots).size).toBe(5);
-    expect((html.match(/data-image-alt=/g) ?? [])).toHaveLength(5);
-    expect(html).not.toContain("<img");
-    expect(html).toContain("aspect-[16/9]");
-    expect(html).toContain("aspect-[4/3]");
+    const placeholders = article.slug === "preventing-recurrent-ingrown-nails";
+    const figures = [...html.matchAll(/<figure id="([^"]+)"/g)].map(match => match[1]);
+    expect(figures).toHaveLength(placeholders ? 5 : 6);
+    expect(new Set(figures).size).toBe(figures.length);
+    expect((html.match(/data-image-alt=/g) ?? [])).toHaveLength(placeholders ? 5 : 0);
+    expect((html.match(/<img /g) ?? [])).toHaveLength(placeholders ? 0 : 6);
+    if (placeholders) {
+      expect(html).toContain("aspect-[16/9]");
+      expect(html).toContain("aspect-[4/3]");
+    } else {
+      expect((html.match(/<img [^>]*alt="[^"]+"/g) ?? [])).toHaveLength(6);
+    }
     if (article.slug.includes("plantar") || article.slug.includes("orthotics")) expect(html).toContain("<table");
   });
 });

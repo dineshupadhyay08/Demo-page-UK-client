@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PrismaClientKnownRequestError, PrismaClientInitializationError } from "@prisma/client/runtime/library";
 
 const mocks = vi.hoisted(() => ({
-  practitioner: vi.fn(), conflicts: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn(), transaction: vi.fn(),
+  practitioner: vi.fn(), schedule: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn(), transaction: vi.fn(),
 }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/server/db/prisma", () => ({ prisma: {
   $transaction: mocks.transaction,
-  practitioner: { findUnique: mocks.practitioner }, appointment: { findMany: mocks.conflicts },
+  practitioner: { findUnique: mocks.practitioner }, $queryRaw: mocks.schedule,
 } }));
 vi.mock("@/server/config/environment", () => ({
   getServerEnvironment: () => ({}), requireBookingPractitionerId: () => "private-practitioner-id",
@@ -26,7 +26,7 @@ describe("availability timing diagnostics", () => {
     vi.setSystemTime(new Date("2030-01-01T00:00:00Z"));
     vi.clearAllMocks();
     mocks.practitioner.mockResolvedValue({ id: "private-practitioner-id" });
-    mocks.conflicts.mockResolvedValue([]);
+    mocks.schedule.mockResolvedValue([{ startsAt: null, durationMinutes: null, status: null }]);
   });
   afterEach(() => vi.useRealTimers());
 
@@ -49,11 +49,9 @@ describe("availability timing diagnostics", () => {
     const response = await GET(request());
     expect(response.status).toBe(200);
     const records = mocks.info.mock.calls;
-    expect(records).toHaveLength(3);
+    expect(records).toHaveLength(2);
     expect(new Set(records.map(([, c]) => c.diagnosticId)).size).toBe(1);
-    expect(records.slice(0, 2).map(([, c]) => c.stage).sort()).toEqual([
-      "appointment_conflict_lookup", "practitioner_lookup",
-    ]);
+    expect(records[0]![1].stage).toBe("schedule_lookup");
     for (const [, context] of records) {
       expect(context.outcome).toBe("success");
       expect(context.durationMs).toBeGreaterThanOrEqual(0);
@@ -69,7 +67,7 @@ describe("availability timing diagnostics", () => {
       code: "P2028", clientVersion: "6", meta: { error: "Unable to start a transaction in the given time." },
     }));
     const submit = () => POST(new Request("http://localhost/api/appointments", {
-      method: "POST", headers: { "x-forwarded-for": "database-failure-quota-test" },
+      method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": "database-failure-quota-test" },
       body: JSON.stringify({ patient: { firstName: "Synthetic", lastName: "Test", email: "synthetic@example.test", phone: "02079460999" },
         treatmentName: "General Podiatry Appointment", appointmentDate: "2030-01-07", appointmentTime: "10:00", privacyAccepted: true }),
     }));
@@ -81,22 +79,21 @@ describe("availability timing diagnostics", () => {
   });
 
   it("preserves the timeout and records late settlement without cancellation or retries", async () => {
-    let resolve!: (value: { id: string }) => void;
-    mocks.practitioner.mockReturnValue(new Promise((done) => { resolve = done; }));
+    let resolve!: (value: { startsAt: null }[]) => void;
+    mocks.schedule.mockReturnValue(new Promise<{ startsAt: null }[]>((done) => { resolve = done; }));
     const pending = GET(request());
     await vi.advanceTimersByTimeAsync(8000);
     expect((await pending).status).toBe(503);
-    resolve({ id: "private-practitioner-id" });
+    resolve([{ startsAt: null }]);
     await vi.advanceTimersByTimeAsync(0);
     expect(mocks.info).toHaveBeenCalledWith("appointment.availability_lookup_timing", expect.objectContaining({
-      stage: "practitioner_lookup", outcome: "success", settledAfterLookupWait: true,
+      stage: "schedule_lookup", outcome: "success", settledAfterLookupWait: true,
     }));
-    expect(mocks.practitioner).toHaveBeenCalledTimes(1);
-    expect(mocks.conflicts).not.toHaveBeenCalled();
+    expect(mocks.schedule).toHaveBeenCalledTimes(1);
   });
 
   it("does not log raw query errors and releases handler counters on failure", async () => {
-    mocks.practitioner.mockRejectedValue(new Error("secret database credential"));
+    mocks.schedule.mockRejectedValue(new Error("secret database credential"));
     expect((await GET(request())).status).toBe(500);
     expect(JSON.stringify([...mocks.info.mock.calls, ...mocks.error.mock.calls])).not.toContain("secret database credential");
     expect(mocks.info).toHaveBeenCalledWith("appointment.availability_request_timing", expect.objectContaining({
@@ -105,13 +102,13 @@ describe("availability timing diagnostics", () => {
   });
 
   it("counts overlapping handlers within the module instance", async () => {
-    let resolve!: (value: { id: string }) => void;
-    const lookup = new Promise((done) => { resolve = done; });
-    mocks.practitioner.mockReturnValue(lookup);
+    let resolve!: (value: { startsAt: null }[]) => void;
+    const lookup = new Promise<{ startsAt: null }[]>((done) => { resolve = done; });
+    mocks.schedule.mockReturnValue(lookup);
     const first = GET(request());
     const second = GET(request());
-    expect(mocks.conflicts).not.toHaveBeenCalled();
-    resolve({ id: "private-practitioner-id" });
+
+    resolve([{ startsAt: null }]);
     expect((await Promise.all([first, second])).map(r => r.status)).toEqual([200, 200]);
     const totals = mocks.info.mock.calls.filter(([event]) => event === "appointment.availability_request_timing");
     expect(totals.map(([, c]) => c.activeHandlersAtStart)).toEqual([1, 2]);
@@ -119,19 +116,19 @@ describe("availability timing diagnostics", () => {
   });
 
   it("distinguishes fully booked availability from database failure", async () => {
-    mocks.conflicts.mockResolvedValue([{ startsAt: new Date("2030-01-07T00:00:00Z"), durationMinutes: 1440, status: "PENDING" }]);
+    mocks.schedule.mockResolvedValue([{ startsAt: new Date("2030-01-07T00:00:00Z"), durationMinutes: 1440, status: "PENDING" }]);
     const empty = await GET(request());
     expect(empty.status).toBe(200);
     expect((await empty.json()).data.slots).toEqual([]);
-    mocks.conflicts.mockRejectedValue(new Error("P1001: database unreachable"));
+    mocks.schedule.mockRejectedValue(new Error("P1001: database unreachable"));
     const failed = await GET(request());
     expect(failed.status).toBe(503);
     expect(await failed.json()).toMatchObject({ ok: false, error: { code: "SERVICE_UNAVAILABLE" } });
   });
 
-  it("allows a slow first lookup and conflict query within one bounded request", async () => {
-    mocks.practitioner.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({ id: "test" }), 3300)));
-    mocks.conflicts.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve([]), 1000)));
+  it("allows a slow joined schedule lookup within one bounded request", async () => {
+    mocks.schedule.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve([{ startsAt: null }]), 4300)));
+
     let settled = false;
     const pending = GET(request()).then(response => { settled = true; return response; });
     await vi.advanceTimersByTimeAsync(2500);
@@ -140,55 +137,51 @@ describe("availability timing diagnostics", () => {
     const response = await pending;
     expect(response.status).toBe(200);
     expect((await response.json()).data.slots.length).toBeGreaterThan(0);
-    expect(mocks.practitioner).toHaveBeenCalledTimes(1);
-    expect(mocks.conflicts).toHaveBeenCalledTimes(1);
+    expect(mocks.schedule).toHaveBeenCalledTimes(1);
   });
 
   it("retries a transient first connection failure once inside the same deadline", async () => {
-    mocks.practitioner.mockImplementationOnce(() => new Promise((_, reject) => setTimeout(() => reject(
+    mocks.schedule.mockImplementationOnce(() => new Promise((_, reject) => setTimeout(() => reject(
       new PrismaClientInitializationError("private host", "6", "P1001")), 1000)));
     const pending = GET(request());
     await vi.advanceTimersByTimeAsync(1200);
     expect((await pending).status).toBe(200);
-    expect(mocks.practitioner).toHaveBeenCalledTimes(2);
-    expect(mocks.conflicts).toHaveBeenCalledTimes(1);
+    expect(mocks.schedule).toHaveBeenCalledTimes(2);
   });
 
   it("stops after one failed retry and never exposes a false empty result", async () => {
-    mocks.practitioner.mockRejectedValue(new PrismaClientInitializationError("private host", "6", "P1001"));
+    mocks.schedule.mockRejectedValue(new PrismaClientInitializationError("private host", "6", "P1001"));
     const pending = GET(request());
     await vi.advanceTimersByTimeAsync(200);
     const response = await pending;
     expect(response.status).toBe(503);
     expect((await response.json()).ok).toBe(false);
-    expect(mocks.practitioner).toHaveBeenCalledTimes(2);
-    expect(mocks.conflicts).not.toHaveBeenCalled();
+    expect(mocks.schedule).toHaveBeenCalledTimes(2);
   });
 
   it("retries the observed initialization connection error without an errorCode", async () => {
-    mocks.practitioner.mockRejectedValueOnce(new PrismaClientInitializationError("Can't reach database server at `private-host:5432`", "6"));
+    mocks.schedule.mockRejectedValueOnce(new PrismaClientInitializationError("Can't reach database server at `private-host:5432`", "6"));
     const pending = GET(request());
     await vi.advanceTimersByTimeAsync(200);
     expect((await pending).status).toBe(200);
-    expect(mocks.practitioner).toHaveBeenCalledTimes(2);
+    expect(mocks.schedule).toHaveBeenCalledTimes(2);
     expect(JSON.stringify(mocks.info.mock.calls)).not.toContain("private-host");
   });
 
   it("does not retry authentication failure or a missing practitioner", async () => {
-    mocks.practitioner.mockRejectedValueOnce(new PrismaClientInitializationError("private", "6", "P1000"));
+    mocks.schedule.mockRejectedValueOnce(new PrismaClientInitializationError("private", "6", "P1000"));
     expect((await GET(request())).status).toBe(503);
-    expect(mocks.practitioner).toHaveBeenCalledTimes(1);
-    mocks.practitioner.mockResolvedValueOnce(null);
+    expect(mocks.schedule).toHaveBeenCalledTimes(1);
+    mocks.schedule.mockResolvedValueOnce([]);
     expect((await GET(request())).status).toBe(503);
-    expect(mocks.practitioner).toHaveBeenCalledTimes(2);
-    expect(mocks.conflicts).not.toHaveBeenCalled();
+    expect(mocks.schedule).toHaveBeenCalledTimes(2);
   });
 
   it("bounds a slow conflict read and does not retry it", async () => {
-    mocks.conflicts.mockReturnValue(new Promise(() => {}));
+    mocks.schedule.mockReturnValue(new Promise(() => {}));
     const pending = GET(request());
     await vi.advanceTimersByTimeAsync(8000);
     expect((await pending).status).toBe(503);
-    expect(mocks.conflicts).toHaveBeenCalledTimes(1);
+    expect(mocks.schedule).toHaveBeenCalledTimes(1);
   });
 });
