@@ -72,6 +72,19 @@ export function ArticleContents({ topics, introduction }: { topics: Topic[]; int
     return () => observer.disconnect();
   }, [topics]);
 
+  function navigateTopics(event: React.KeyboardEvent<HTMLAnchorElement>, index: number) {
+    const offsets: Record<string, number> = {
+      ArrowDown: (index + 1) % topics.length, ArrowUp: (index + topics.length - 1) % topics.length,
+      Home: 0, End: topics.length - 1,
+    };
+    const next = offsets[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    const links = event.currentTarget.closest("nav")?.querySelectorAll("a");
+    links?.[next]?.focus({ preventScroll: true });
+    handleSidebarClick(topics[next]!.id);
+  }
+
   const handleSidebarClick = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -97,6 +110,8 @@ export function ArticleContents({ topics, introduction }: { topics: Topic[]; int
                 <li key={item.id}>
                   <a
                     href={`#${item.id}`}
+                    aria-current={activeId === item.id ? "location" : undefined}
+                    onKeyDown={event => navigateTopics(event, index)}
                     onClick={(e) => {
                       e.preventDefault();
                       handleSidebarClick(item.id);
@@ -125,10 +140,12 @@ export function ArticleContents({ topics, introduction }: { topics: Topic[]; int
           </summary>
           <div className="absolute left-0 right-0 top-full z-30 mt-2 max-h-[60svh] overflow-y-auto rounded-2xl border bg-card p-2 shadow-lg">
             <nav aria-label="Article topics (mobile)" className="space-y-1">
-              {topics.map((item) => (
+              {topics.map((item, index) => (
                 <a
                   key={item.id}
                   href={`#${item.id}`}
+                    aria-current={activeId === item.id ? "location" : undefined}
+                    onKeyDown={event => navigateTopics(event, index)}
                   onClick={(e) => {
                     e.preventDefault();
                     handleSidebarClick(item.id);

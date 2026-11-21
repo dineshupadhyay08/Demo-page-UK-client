@@ -293,7 +293,7 @@ export function HomePage({ journalCards }: { journalCards: ReactNode }) {
           <p>{CLINIC.practitioner} is registered with the Health and Care Professions Council (HCPC).</p>
           <div className="flex gap-6">
             <span>© 2026 Footwell Podiatry</span>
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+            <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
             <a href="#" className="hover:text-white transition-colors">Accessibility</a>
           </div>
         </div>

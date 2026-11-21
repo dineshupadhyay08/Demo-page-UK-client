@@ -107,21 +107,21 @@ const placements: Record<string, Record<string, ImagePlacement>> = {
     },
   },
   "preventing-recurrent-ingrown-nails": {
-    meaning: {
+    definition: {
       id: "ingrown-nail-anatomy",
       title: "The nail and surrounding skin",
       alt: "Labelled diagram of a toenail and nail folds showing where a nail edge can press into the surrounding skin",
       caption: "Anatomy: the nail edge and the adjacent skin fold.",
       large: true,
     },
-    "routine-care": {
+    prevention: {
       id: "ingrown-nail-prevention",
       title: "Routine care versus a painful nail",
       alt: "Educational illustration of trimming an unaffected toenail across without cutting down its edges",
       caption:
         "Prevention: routine care of an unaffected nail differs from care of a painful ingrown nail.",
     },
-    shoes: {
+    footwear: {
       id: "ingrown-nail-footwear",
       title: "Room around the toes",
       alt: "Comparison of toe room in a spacious shoe and a narrow pointed shoe",
@@ -247,10 +247,10 @@ export function EducationalSection({
   const remainingParagraphs = [paragraphRemainder, ...section.paragraphs.slice(1)].filter(Boolean);
   const warning = section.presentation === "warning";
   const treatmentComparison =
-    article.slug === "recognising-early-signs-of-plantar-fasciitis" && section.id === "options";
+    article.slug === "recognising-early-signs-of-plantar-fasciitis" && section.id === "management";
 
   return (
-    <section id={article.slug === "custom-orthotics-vs-off-the-shelf-insoles" ? undefined : section.id} className="mb-10 last:mb-0">
+    <section className="mb-10 last:mb-0">
       <h2 className="mb-5 font-serif text-3xl leading-snug text-heading">{section.heading}</h2>
 
       {/* No image placement */}
