@@ -12,7 +12,7 @@ export type AppointmentRecord = Readonly<{
   consultationMode: ConsultationMode;
   status: AppointmentStatus;
   privacyAcceptedAt: Date | null;
-  patientId: string;
+  patientId: string | null;
   practitionerId: string;
   createdAt: Date;
   updatedAt: Date;

@@ -49,9 +49,13 @@ model Appointment {
   status           AppointmentStatus     @default(PENDING)
   patientNote      String?
   privacyAcceptedAt DateTime?
-  patientId        String
+  patientId        String?
+  guestContact     Json?
+  noticeVersion    String?
+  requestKey       String? @unique
+  requestDigest    String?
   practitionerId   String
-  patient          PatientProfile        @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  patient          PatientProfile?        @relation(fields: [patientId], references: [id], onDelete: Restrict)
   practitioner     Practitioner          @relation(fields: [practitionerId], references: [id], onDelete: Restrict)
   documents        AppointmentDocument[]
   createdAt        DateTime              @default(now())
