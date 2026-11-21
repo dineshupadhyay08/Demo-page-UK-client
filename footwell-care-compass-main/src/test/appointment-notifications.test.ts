@@ -22,16 +22,15 @@ describe("SMTP appointment notifications", () => {
     expect(patient.to[0].address).toBe(input.patient.email);
     expect(clinic.to[0].address).toBe("clinic@gmail.com");
     for(const mail of [patient,clinic]) {
-      expect(mail.html).toContain("&lt;Synthetic&gt;");
-      expect(mail.html).not.toContain("<script>");
-      expect(mail.text).toContain("10:00 BST (Europe/London)");
-      expect(mail.text).toContain("40 minutes");
+      for (const sensitive of [input.patient.firstName, input.patient.lastName, input.patientNote, input.patient.email, input.patient.phone, booking.treatmentName, booking.appointmentDate, booking.appointmentTime]) {
+        expect(mail.text + mail.html + mail.subject).not.toContain(sensitive);
+      }
       expect(mail.text).toContain("not confirmed until reviewed");
       expect(mail.text).toContain("+448956756577");
       expect(mail.attachments).toBeUndefined();
     }
     expect(patient.text).not.toContain(input.patientNote);
-    expect(clinic.text).toContain(input.patientNote);
+    expect(clinic.text).not.toContain(input.patientNote);
     expect(mocks.info).toHaveBeenCalledWith("appointment.email_accepted",{audience:"patient"});
     expect(mocks.info).toHaveBeenCalledWith("appointment.email_accepted",{audience:"clinic"});
   });
@@ -56,5 +55,4 @@ describe("SMTP appointment notifications", () => {
     expect(JSON.stringify(mocks.info.mock.calls)).not.toMatch(/private-message-id|private@example|sensitive-provider/);
   });
   it("never calls recipient rejection delivery success",async()=>{mocks.send.mockResolvedValue({accepted:[],rejected:["private@example.test"],response:"private rejection text"});await sendAppointmentNotifications(booking,input);expect(mocks.info).not.toHaveBeenCalled();expect(mocks.warn).toHaveBeenCalledTimes(2);expect(JSON.stringify(mocks.warn.mock.calls)).not.toContain("private");});
-  it("uses London GMT in winter",async()=>{await sendAppointmentNotifications({...booking,appointmentDate:"2099-01-05"},input);expect(mocks.send.mock.calls[0]![0].text).toContain("10:00 GMT (Europe/London)");});
 });

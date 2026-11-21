@@ -5,7 +5,6 @@ import { z } from "zod";
 import { CLINIC } from "@/config/clinic";
 import type { CreatedAppointment } from "@/server/appointments/booking-service";
 import type { CreateAppointmentRequest } from "@/server/appointments/booking-schema";
-import { getTreatmentDuration, londonDateTimeToUtc, UK_TIME_ZONE } from "@/server/appointments/availability";
 import { logger } from "@/server/logging/logger";
 
 const configuration = z.object({
@@ -39,9 +38,7 @@ export async function sendAppointmentNotifications(booking: CreatedAppointment, 
     return;
   }
   const parsed = configuration.safeParse(process.env);
-  const startsAt = londonDateTimeToUtc(booking.appointmentDate, booking.appointmentTime);
-  const duration = getTreatmentDuration(booking.treatmentName);
-  if (!parsed.success || !startsAt || duration === null) {
+  if (!parsed.success) {
     logger.warn("appointment.email_skipped", { reason: "invalid_configuration" });
     return;
   }
@@ -52,22 +49,9 @@ export async function sendAppointmentNotifications(booking: CreatedAppointment, 
     connectionTimeout: 10_000, greetingTimeout: 10_000, socketTimeout: 15_000,
     logger: false, debug: false, disableFileAccess: true, disableUrlAccess: true,
   });
-  const date = new Intl.DateTimeFormat("en-GB", { timeZone: UK_TIME_ZONE, dateStyle: "full" }).format(startsAt);
-  const time = new Intl.DateTimeFormat("en-GB", { timeZone: UK_TIME_ZONE, hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "short" }).format(startsAt);
-  const common: [string, string][] = [
-    ["Patient", `${input.patient.firstName} ${input.patient.lastName}`],
-    ["Booking reference", booking.bookingReference], ["Treatment", booking.treatmentName],
-    ["Date", date], ["Time", `${time} (${UK_TIME_ZONE})`],
-    ["Consultation", "Online video consultation"], ["Duration", `${duration} minutes`],
-    ["Status", "PENDING — awaiting clinic review"],
-  ];
   await Promise.all((["patient", "clinic"] as const).map(async audience => {
     try {
-      const rows: [string, string][] = audience === "patient" ? common : [...common,
-        ["Patient email", input.patient.email], ["Patient phone", input.patient.phone],
-        ["Privacy acknowledgement", input.privacyAccepted ? "Accepted" : "Not accepted"],
-        ...(input.patientNote ? [["Patient note", input.patientNote] as [string, string]] : []),
-      ];
+      const rows: [string, string][] = [["Booking reference", booking.bookingReference]];
       const title = audience === "patient" ? "Appointment request received" : "New appointment request";
       const notice = "The request has been received. This appointment is not confirmed until reviewed by the clinic.";
       const contact = `Clinic contact: ${config.CLINIC_CONTACT_EMAIL} | ${config.CLINIC_CONTACT_PHONE}`;
