@@ -1,0 +1,1 @@
+export const BOOKING_NOTICE_VERSION = "2026-11-20.1";

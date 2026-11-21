@@ -1,3 +1,4 @@
+import { BOOKING_NOTICE_VERSION } from "@/config/booking-privacy";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Video, X } from "lucide-react";
 import { CLINIC, TREATMENTS } from "@/config/clinic";
@@ -97,6 +98,7 @@ export function BookingModal({ initialTreatment, onClose }: BookingModalProps) {
   const [bookingResult, setBookingResult] = useState<BookingResult | null>(null);
   const availabilityRequestRef = useRef<AbortController | null>(null);
   const submissionInFlightRef = useRef(false);
+  const attempt = useRef<{ body: string; key: string } | null>(null);
   const days = useMemo(() => nextBookingDays(), []);
   const selectedDate = day === null ? null : days[day] ? londonDateKey(days[day]) : null;
   const selectedDay = day === null ? undefined : days[day];
@@ -171,7 +173,7 @@ export function BookingModal({ initialTreatment, onClose }: BookingModalProps) {
     }
     const parsed = createAppointmentRequestSchema.safeParse({
       patient, treatmentName: treatment, appointmentDate: selectedDate,
-      appointmentTime: time, patientNote, privacyAccepted,
+      appointmentTime: time, patientNote, privacyAccepted, noticeVersion: BOOKING_NOTICE_VERSION,
     });
     if (!parsed.success) {
       setSubmissionError(bookingValidationMessage(parsed.error.issues.map(issue => issue.path.join("."))));
@@ -182,10 +184,12 @@ export function BookingModal({ initialTreatment, onClose }: BookingModalProps) {
     setIsSubmitting(true);
     setSubmissionError("");
     try {
+      const body = JSON.stringify(parsed.data);
+      if (attempt.current?.body !== body) attempt.current = { body, key: crypto.randomUUID() };
       const response = await fetch("/api/appointments", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        headers: { "Content-Type": "application/json", "Idempotency-Key": attempt.current.key },
+        body,
       });
       const payload = (await response.json()) as unknown;
       if (
@@ -202,6 +206,14 @@ export function BookingModal({ initialTreatment, onClose }: BookingModalProps) {
         !("status" in payload.data) ||
         payload.data.status !== "PENDING"
       ) {
+        if (response.status === 409 && (payload as { error?: { code?: string } } | null)?.error?.code === "APPOINTMENT_UNAVAILABLE") {
+          setStep(1);
+          setTime(null);
+          setSlots([]);
+          setSubmissionError("That time is no longer available. Choose another time.");
+          await loadAvailableSlots(selectedDate);
+          return;
+        }
         throw new Error(readApiMessage(payload, "We could not submit your appointment request."));
       }
       setBookingResult(payload.data as BookingResult);
@@ -267,6 +279,7 @@ export function BookingModal({ initialTreatment, onClose }: BookingModalProps) {
           </div>
         )}
 
+        {step === 1 && submissionError && <p role="alert">{submissionError}</p>}
         {step === 1 && (
           <div className="mt-5">
             <p className="text-sm text-muted-foreground">{treatment} with {CLINIC.practitioner}</p>
@@ -350,7 +363,7 @@ export function BookingModal({ initialTreatment, onClose }: BookingModalProps) {
             </label>
             <label className="flex cursor-pointer items-start gap-3 text-sm">
               <input type="checkbox" checked={privacyAccepted} onChange={(event) => setPrivacyAccepted(event.target.checked)} className="mt-1 accent-[var(--accent)]" />
-              <span>I acknowledge that Footwell Podiatry will use these details to manage my appointment request.</span>
+              <span>I acknowledge that Footwell Podiatry will use these details to manage my appointment request. <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline">Booking privacy notice (opens in a new tab)</a></span>
             </label>
             {patientError && <p className="text-sm text-destructive" role="alert">{patientError}</p>}
             <ActionButton className="w-full" onClick={() => { if (validatePatientDetails()) setStep(3); }}>
