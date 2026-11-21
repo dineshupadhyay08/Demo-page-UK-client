@@ -2,12 +2,19 @@ type RateLimitEntry = Readonly<{ count: number; resetAt: number }>;
 
 const entries = new Map<string, RateLimitEntry>();
 
+let nextSweep = 0;
+
 export function takePublicRequestQuota(
   key: string,
   limit: number,
   windowMs: number,
   now: number = Date.now(),
 ): boolean {
+  if (now >= nextSweep) {
+    for (const [id, entry] of entries) if (entry.resetAt <= now) entries.delete(id);
+    nextSweep = now + 60_000;
+  }
+  if (!entries.has(key) && entries.size >= 50_000) return false;
   const current = entries.get(key);
   if (!current || current.resetAt <= now) {
     entries.set(key, { count: 1, resetAt: now + windowMs });
