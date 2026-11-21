@@ -14,6 +14,34 @@ export const dynamic = "force-dynamic";
 
 const MAX_BODY_BYTES = 16 * 1024;
 
+async function readBookingJson(request: Request): Promise<unknown> {
+  const origin = request.headers.get("origin");
+  if ((origin !== null && origin !== new URL(request.url).origin) ||
+      request.headers.get("sec-fetch-site") === "cross-site" ||
+      request.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !== "application/json") throw invalidRequest();
+  const reader = request.body?.getReader();
+  if (!reader) throw invalidRequest();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > MAX_BODY_BYTES) {
+        await reader.cancel();
+        throw invalidRequest();
+      }
+      chunks.push(value);
+    }
+    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  } catch {
+    throw invalidRequest();
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     const contentLength = Number(request.headers.get("content-length") ?? 0);
@@ -24,14 +52,11 @@ export async function POST(request: Request): Promise<NextResponse> {
       throw rateLimited();
     }
 
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch {
-      body = undefined;
-    }
-    const input = parseRequest(createAppointmentRequestSchema, body);
-    const booking = await createAppointment(input);
+    const key = request.headers.get("idempotency-key");
+    if (key !== null && !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(key)) throw invalidRequest();
+    const input = parseRequest(createAppointmentRequestSchema, await readBookingJson(request));
+    const { booking, replay } = await createAppointment(input, new Date(), key?.toLowerCase());
+    if (replay) return NextResponse.json(success(booking), { status: 201 });
     // Persistence has committed. Notification failures must never undo booking success.
     try {
       after(async () => {
@@ -66,6 +91,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       invalidFields: knownFields.filter(field => Object.hasOwn(normalized.fieldErrors!, field)).join(",") || "form",
     } : {}),
     ...(diagnostic.prismaCode ? { prismaCode: diagnostic.prismaCode } : {}),
+    ...(diagnostic.schemaField ? { schemaField: diagnostic.schemaField } : {}),
     ...(diagnostic.transactionReason ? { transactionReason: diagnostic.transactionReason } : {}),
     ...(diagnostic.transactionDetail ? { transactionDetail: diagnostic.transactionDetail } : {}),
   });

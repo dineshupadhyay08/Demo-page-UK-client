@@ -1,6 +1,7 @@
-import { randomBytes, randomUUID } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { Prisma, type AppointmentStatus } from "@prisma/client";
-import { PrismaClientKnownRequestError, PrismaClientInitializationError } from "@prisma/client/runtime/library";
+import { isKnownDatabaseError } from "@/server/db/diagnostics";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/library";
 import {
   MAX_APPOINTMENT_DURATION_MINUTES,
   filterAvailableSlots,
@@ -92,20 +93,23 @@ function configuredPractitionerNotFound(): ApiError {
   );
 }
 
-async function findPotentiallyConflictingAppointments(
-  practitionerId: string,
-  date: string,
-): Promise<StoredAppointmentInterval[]> {
+async function readSchedule(practitionerId: string, date: string): Promise<StoredAppointmentInterval[]> {
   const { startsAt, endsAt } = requireDateRange(date);
-  const searchStartsAt = new Date(startsAt.getTime() - MAX_APPOINTMENT_DURATION_MINUTES * 60_000);
-  return prisma.appointment.findMany({
-    where: {
-      practitionerId,
-      status: { in: blockingStatuses },
-      startsAt: { gte: searchStartsAt, lt: endsAt },
-    },
-    select: { startsAt: true, durationMinutes: true, status: true },
-  });
+  const earliest = new Date(startsAt.getTime() - MAX_APPOINTMENT_DURATION_MINUTES * 60_000);
+  // One snapshot and one round trip. A null interval means the practitioner
+  // exists with no active bookings; zero rows means the configuration is invalid.
+  type Row = StoredAppointmentInterval | { startsAt: null; durationMinutes: null; status: null };
+  const rows = await prisma.$queryRaw<Row[]>`
+    SELECT a."startsAt", a."durationMinutes", a."status"
+    FROM "Practitioner" p
+    LEFT JOIN "Appointment" a ON a."practitionerId" = p."id"
+      AND a."status" IN ('PENDING', 'CONFIRMED')
+      AND a."startsAt" >= (${earliest.toISOString()}::timestamptz AT TIME ZONE 'UTC')
+      AND a."startsAt" < (${endsAt.toISOString()}::timestamptz AT TIME ZONE 'UTC')
+    WHERE p."id" = ${practitionerId}
+  `;
+  if (!rows.length) throw configuredPractitionerNotFound();
+  return rows.filter((row): row is StoredAppointmentInterval => row.startsAt !== null);
 }
 
 function createBookingReference(): string {
@@ -114,7 +118,7 @@ function createBookingReference(): string {
 
 function isBookingReferenceConflict(error: unknown): boolean {
   return (
-    error instanceof PrismaClientKnownRequestError &&
+    isKnownDatabaseError(error) &&
     error.code === "P2002" &&
     Array.isArray(error.meta?.["target"]) &&
     error.meta["target"].includes("bookingReference")
@@ -122,7 +126,7 @@ function isBookingReferenceConflict(error: unknown): boolean {
 }
 
 function isTransactionConflict(error: unknown): boolean {
-  return error instanceof PrismaClientKnownRequestError && error.code === "P2034";
+  return isKnownDatabaseError(error) && error.code === "P2034";
 }
 
 export async function getAppointmentAvailability(
@@ -137,13 +141,13 @@ export async function getAppointmentAvailability(
   if (candidates.length === 0) return { date: request.date, slots: [] };
   const practitionerId = getBookingPractitionerId();
   let lookupWaitEnded = false;
-  async function findPractitioner(): Promise<{ id: string } | null> {
-    const lookup = () => prisma.practitioner.findUnique({ where: { id: practitionerId }, select: { id: true } });
+  async function lookupSchedule() {
+    const lookup = () => readSchedule(practitionerId, request.date);
     try {
       return await lookup();
     } catch (error) {
       const code = error instanceof PrismaClientInitializationError ? error.errorCode
-        : error instanceof PrismaClientKnownRequestError ? error.code : undefined;
+        : isKnownDatabaseError(error) ? error.code : undefined;
       // Prisma's engine can omit errorCode for this exact connection failure.
       const uncodedConnectionFailure = error instanceof PrismaClientInitializationError
         && !code && /Can't reach database server at/.test(error.message);
@@ -176,20 +180,9 @@ export async function getAppointmentAvailability(
       });
     }
   }
-  const [practitioner, appointments] = await withAvailabilityLookupTimeout(
-    (async () => {
-      // Do not fan out two connections for one availability request.
-      const practitioner = await timedLookup("practitioner_lookup", findPractitioner);
-      // The first query cannot be cancelled by Promise.race. Avoid launching more
-      // database work after its caller has already received the deadline error.
-      if (lookupWaitEnded || signal?.aborted) throw new AvailabilityLookupTimeoutError();
-      if (!practitioner) throw configuredPractitionerNotFound();
-      const appointments = await timedLookup("appointment_conflict_lookup", () =>
-        findPotentiallyConflictingAppointments(practitionerId, request.date));
-      return [practitioner, appointments] as const;
-    })(),
+  const appointments = await withAvailabilityLookupTimeout(
+    timedLookup("schedule_lookup", lookupSchedule),
   ).finally(() => { lookupWaitEnded = true; });
-  if (!practitioner) throw configuredPractitionerNotFound();
   const slots = filterAvailableSlots(candidates, durationMinutes, appointments).map(({ time }) => ({ time }));
 
   return { date: request.date, slots };
@@ -198,7 +191,24 @@ export async function getAppointmentAvailability(
 export async function createAppointment(
   request: CreateAppointmentRequest,
   now: Date = new Date(),
-): Promise<CreatedAppointment> {
+  requestKey?: string,
+): Promise<{ booking: CreatedAppointment; replay: boolean }> {
+  const digest = createHash("sha256").update(JSON.stringify(request)).digest("hex");
+  function receipt(bookingReference: string): CreatedAppointment {
+    return { bookingReference, status: "PENDING", treatmentName: request.treatmentName,
+      appointmentDate: request.appointmentDate, appointmentTime: request.appointmentTime,
+      timezone: "Europe/London", consultationMode: "VIDEO" };
+  }
+  async function previousReceipt() {
+    if (!requestKey) return null;
+    const row = await prisma.appointment.findUnique({ where: { requestKey },
+      select: { requestDigest: true, bookingReference: true } });
+    if (!row) return null;
+    if (row.requestDigest !== digest) throw new ApiError(409, "INVALID_REQUEST", "Request key already used.");
+    return { booking: receipt(row.bookingReference), replay: true };
+  }
+  const previous = await previousReceipt();
+  if (previous) return previous;
   const durationMinutes = requireTreatmentDuration(request.treatmentName);
   const startsAt = isCandidateSlot(request.appointmentDate, request.appointmentTime, durationMinutes, now);
   if (!startsAt) throw appointmentUnavailable();
@@ -236,13 +246,6 @@ export async function createAppointment(
           );
           if (available.length === 0) throw appointmentUnavailable();
 
-          const patient = await transaction.patientProfile.upsert({
-            where: { email: request.patient.email },
-            create: request.patient,
-            update: {},
-            select: { id: true },
-          });
-
           await transaction.appointment.create({
             data: {
               bookingReference,
@@ -253,7 +256,9 @@ export async function createAppointment(
               status: "PENDING",
               privacyAcceptedAt: new Date(),
               ...(request.patientNote ? { patientNote: request.patientNote } : {}),
-              patientId: patient.id,
+              guestContact: request.patient,
+              noticeVersion: request.noticeVersion ?? null,
+              ...(requestKey ? { requestKey, requestDigest: digest } : {}),
               practitionerId,
             },
           });
@@ -265,16 +270,11 @@ export async function createAppointment(
         },
       );
 
-      return {
-        bookingReference,
-        status: "PENDING",
-        treatmentName: request.treatmentName,
-        appointmentDate: request.appointmentDate,
-        appointmentTime: request.appointmentTime,
-        timezone: "Europe/London",
-        consultationMode: "VIDEO",
-      };
+      return { booking: receipt(bookingReference), replay: false };
     } catch (error) {
+      const committed = await previousReceipt();
+      if (committed) return committed;
+      if (isKnownDatabaseError(error) && error.message.includes("Appointment_practitioner_active_slot_excl")) throw appointmentUnavailable();
       if (isBookingReferenceConflict(error) && attempt < 2) continue;
       if (isTransactionConflict(error)) throw appointmentUnavailable();
       throw error;

@@ -1,3 +1,4 @@
+import { BOOKING_NOTICE_VERSION } from "@/config/booking-privacy";
 import { z } from "zod";
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -45,6 +46,7 @@ export const createAppointmentRequestSchema = z
       (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
       z.string().trim().max(2000).optional(),
     ),
+    noticeVersion: z.literal(BOOKING_NOTICE_VERSION).optional(),
     privacyAccepted: z.literal(true, {
       errorMap: () => ({ message: "Please acknowledge the privacy notice." }),
     }),
